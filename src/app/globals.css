@@ -71,26 +71,6 @@ body::before {
   opacity: 0.65;
 }
 
-/* Герой: мягкая круговая маска — скрывает прямоугольный чёрный фон вокруг круглой работы */
-.hero-floral-visual {
-  -webkit-mask-image: radial-gradient(
-    circle closest-side at center,
-    #fff 84%,
-    rgba(255, 255, 255, 0.4) 93%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    circle closest-side at center,
-    #fff 84%,
-    rgba(255, 255, 255, 0.4) 93%,
-    transparent 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-}
-
 @keyframes fade-up {
   from {
     opacity: 0;

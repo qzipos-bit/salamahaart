@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Container } from "@/components/layout/container";
+import { HeroResinVisual } from "@/components/sections/hero-resin-visual";
 import { QuizLaunchButton } from "@/components/quiz/quiz-launch-button";
 import { Button } from "@/components/ui/button";
 
@@ -42,18 +42,7 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none lg:justify-self-end">
-            <div className="relative aspect-square w-full max-w-[420px] lg:max-w-[min(100%,520px)]">
-              <Image
-                src="/hero-floral-circle.png"
-                alt="Круглое панно из смолы с сохранёнными розами"
-                fill
-                priority
-                className="hero-floral-visual object-contain object-center drop-shadow-[0_20px_50px_rgba(30,48,36,0.1)]"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </div>
-          </div>
+          <HeroResinVisual />
         </div>
 
         <ul className="mt-14 grid gap-4 sm:grid-cols-3 lg:mt-20">
