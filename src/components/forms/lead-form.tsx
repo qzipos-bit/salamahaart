@@ -33,8 +33,11 @@ export function LeadForm({
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4 sm:flex-row sm:items-end">
-      <div className="flex-1 space-y-4 sm:flex sm:gap-4 sm:space-y-0">
+    <form
+      onSubmit={submit}
+      className="flex flex-col gap-4 md:flex-row md:items-end md:gap-4"
+    >
+      <div className="min-w-0 flex-1 space-y-4 md:flex md:gap-4 md:space-y-0">
         <Input
           label="Имя"
           name="name"
@@ -57,7 +60,10 @@ export function LeadForm({
           className="flex-1"
         />
       </div>
-      <Button type="submit" className="shrink-0 sm:min-w-[200px]">
+      <Button
+        type="submit"
+        className="w-full max-w-full shrink-0 whitespace-normal md:w-auto"
+      >
         {submitLabel}
       </Button>
     </form>

@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export function HeroResinVisual() {
   return (
     <figure className="m-0 w-full max-w-md lg:max-w-none lg:justify-self-end">
@@ -25,13 +23,11 @@ export function HeroResinVisual() {
             }}
             aria-hidden
           />
-          <Image
-            src="/hero-resin-art.png"
-            alt="Круглое панно из смолы с сохранёнными розами"
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="z-[1] object-contain p-[1.5%]"
+          <div
+            className="absolute inset-[1.5%] z-[1] overflow-hidden rounded-full bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url(/hero-resin-art.webp)" }}
+            role="img"
+            aria-label="Круглое панно из смолы с сохранёнными розами"
           />
         </div>
       </div>

@@ -14,7 +14,7 @@ export function QuickLead() {
               Оставьте телефон — пришлю варианты и ориентир по бюджету.
             </p>
           </div>
-          <div className="flex-1 lg:max-w-2xl">
+          <div className="min-w-0 flex-1 lg:max-w-2xl">
             <LeadForm submitLabel="Жду предложение" source="Быстрая заявка" />
           </div>
         </div>

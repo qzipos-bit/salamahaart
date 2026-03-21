@@ -6,32 +6,32 @@ const items = [
   {
     title: "Столы",
     href: "/catalog?cat=stoly",
-    img: "/category-stoly.png",
+    img: "/category-stoly.webp",
   },
   {
     title: "Часы",
     href: "/catalog?cat=chasy",
-    img: "/category-chasy.png",
+    img: "/category-chasy.webp",
   },
   {
     title: "Картины",
     href: "/catalog?cat=kartiny",
-    img: "/category-kartiny.png",
+    img: "/category-kartiny.webp",
   },
   {
     title: "Декор",
     href: "/catalog?cat=dekor",
-    img: "/category-dekor.png",
+    img: "/category-dekor.webp",
   },
   {
     title: "Посуда",
     href: "/catalog?cat=posuda",
-    img: "/category-posuda.png",
+    img: "/category-posuda.webp",
   },
   {
     title: "Букеты в смоле",
     href: "/catalog?cat=bukety",
-    img: "/category-bukety.png",
+    img: "/category-bukety.webp",
   },
 ];
 

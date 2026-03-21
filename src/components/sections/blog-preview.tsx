@@ -6,20 +6,20 @@ const posts = [
   {
     title: "Как ухаживать за столешницей из смолы",
     excerpt: "Простые правила, чтобы сохранить блеск на годы.",
-    img: "/blog-uhod-stoleshnica.png",
+    img: "/blog-uhod-stoleshnica.webp",
     href: "#blog",
   },
   {
     title: "Палитра 2026: спокойные натуральные оттенки",
     excerpt:
       "Spring Water, Sand, Wood и Navy — сочетания для тихих, дорогих интерьеров.",
-    img: "/blog-palitra-2026.png",
+    img: "/blog-palitra-2026.webp",
     href: "#blog",
   },
   {
     title: "Сохранение букета: что важно знать",
     excerpt: "Сроки, упаковка доставки, оттенки пигмента.",
-    img: "/blog-buket.png",
+    img: "/blog-buket.webp",
     href: "#blog",
   },
 ];

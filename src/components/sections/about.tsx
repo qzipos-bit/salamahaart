@@ -14,7 +14,7 @@ export function About() {
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] lg:col-span-5">
             <Image
-              src="/about-victoria.png"
+              src="/about-victoria.webp"
               alt="Виктория — художник по эпоксидной смоле с работой из смолы и дерева"
               fill
               className="object-cover object-[center_25%]"

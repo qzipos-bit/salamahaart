@@ -4,16 +4,16 @@ import { Container } from "@/components/layout/container";
 type Shot = { src: string; aspect: string; alt?: string };
 
 const shots: Shot[] = [
-  { src: "/portfolio-1.png", aspect: "aspect-[4/5]" },
-  { src: "/portfolio-2.png", aspect: "aspect-square" },
-  { src: "/portfolio-3.png", aspect: "aspect-[5/6]" },
+  { src: "/portfolio-1.webp", aspect: "aspect-[4/5]" },
+  { src: "/portfolio-2.webp", aspect: "aspect-square" },
+  { src: "/portfolio-3.webp", aspect: "aspect-[5/6]" },
   {
-    src: "/portfolio-4.png",
+    src: "/portfolio-4.webp",
     aspect: "aspect-[3/4]",
     alt: "Расчёска из эпоксидной смолы с сухоцветами",
   },
-  { src: "/portfolio-5.png", aspect: "aspect-[3/4]" },
-  { src: "/portfolio-6.png", aspect: "aspect-[4/5]" },
+  { src: "/portfolio-5.webp", aspect: "aspect-[3/4]" },
+  { src: "/portfolio-6.webp", aspect: "aspect-[4/5]" },
 ];
 
 export function Gallery() {

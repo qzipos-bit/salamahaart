@@ -28,7 +28,7 @@ export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
             aria-label="Salamaha Fine Art — на главную"
           >
             <Image
-              src="/logo-salamaha.png"
+              src="/logo-salamaha.webp"
               alt=""
               width={56}
               height={56}

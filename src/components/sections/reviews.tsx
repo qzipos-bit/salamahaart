@@ -5,17 +5,17 @@ const reviews = [
   {
     name: "Алина",
     text: "Стол приехал идеально упакованный. На солнце смола просто поёт — как в студии.",
-    avatar: "/review-marina.png",
+    avatar: "/review-marina.webp",
   },
   {
     name: "Марина & Илья",
     text: "Сохранили свадебный букет. Очень бережно, согласовали оттенок под гостиную.",
-    avatar: "/review-alina.png",
+    avatar: "/review-alina.webp",
   },
   {
     name: "Екатерина",
     text: "Панно стало центром комнаты. Друзья думают, что из галереи.",
-    avatar: "/review-ekaterina.png",
+    avatar: "/review-ekaterina.webp",
   },
 ];
 
