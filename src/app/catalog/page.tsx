@@ -3,7 +3,17 @@ import Link from "next/link";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
 import { ProductCard } from "@/components/shop/product-card";
+import { CatalogFiltersSidebar } from "@/components/catalog/catalog-filters-sidebar";
 import { CATALOG_FAQ_ITEMS } from "@/lib/catalog-faq";
+import {
+  CATALOG_CATEGORY_LABELS,
+  filterCatalogProducts,
+  formatRubShort,
+  getCatalogPriceExtent,
+  parseCatalogPriceParams,
+  CATALOG_CATEGORIES,
+} from "@/lib/catalog-filters";
+import type { ProductCatalogCategory } from "@/components/shop/product-card";
 import { ALL_PRODUCTS } from "@/lib/products";
 import { SEO_CATALOG_LANDINGS } from "@/lib/seo-catalog-landings";
 
@@ -14,16 +24,7 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ cat?: string }>;
-};
-
-const catLabels: Record<string, string> = {
-  stoly: "Столы",
-  chasy: "Часы",
-  kartiny: "Картины",
-  dekor: "Декор",
-  posuda: "Посуда",
-  bukety: "Букеты в смоле",
+  searchParams: Promise<{ cat?: string; priceMin?: string; priceMax?: string }>;
 };
 
 function CatalogFaqJsonLd() {
@@ -50,8 +51,28 @@ function CatalogFaqJsonLd() {
 }
 
 export default async function CatalogPage({ searchParams }: Props) {
-  const { cat } = await searchParams;
-  const label = cat ? catLabels[cat] : null;
+  const { cat: catRaw, priceMin: priceMinRaw, priceMax: priceMaxRaw } =
+    await searchParams;
+  const extent = getCatalogPriceExtent(ALL_PRODUCTS);
+  const cat: ProductCatalogCategory | "" =
+    catRaw &&
+    CATALOG_CATEGORIES.includes(catRaw as ProductCatalogCategory)
+      ? (catRaw as ProductCatalogCategory)
+      : "";
+  const priceRange = parseCatalogPriceParams(
+    priceMinRaw,
+    priceMaxRaw,
+    extent,
+  );
+
+  const filtered = filterCatalogProducts(
+    ALL_PRODUCTS,
+    cat || undefined,
+    priceRange,
+  );
+
+  const total = ALL_PRODUCTS.length;
+  const hasFilters = Boolean(cat || priceRange.active);
 
   return (
     <LandingShell>
@@ -67,31 +88,77 @@ export default async function CatalogPage({ searchParams }: Props) {
           <h1 className="mt-6 font-serif text-4xl font-semibold text-green">
             Каталог: изделия, сувениры, украшения из эпоксидной смолы
           </h1>
-          {label ? (
-            <p className="mt-2 text-sm text-fg/60">
-              Фильтр: <span className="font-medium text-green">{label}</span>{" "}
-              <Link href="/catalog" className="underline underline-offset-2">
-                сбросить
-              </Link>
+
+          {hasFilters ? (
+            <p className="mt-3 text-sm text-fg/70">
+              <span className="text-fg/55">Показано:</span>{" "}
+              <span className="font-medium text-green">
+                {filtered.length} из {total}
+              </span>
+              {cat ? (
+                <>
+                  {" "}
+                  ·{" "}
+                  <span className="text-fg/55">изделия:</span>{" "}
+                  {CATALOG_CATEGORY_LABELS[cat]}
+                </>
+              ) : null}
+              {priceRange.active ? (
+                <>
+                  {" "}
+                  ·{" "}
+                  <span className="text-fg/55">цена:</span>{" "}
+                  {formatRubShort(priceRange.min)} —{" "}
+                  {formatRubShort(priceRange.max)}
+                </>
+              ) : null}
             </p>
           ) : null}
-          <div className="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-fg/70">
-            <p>
-              Сувениры из эпоксидной смолы — это оригинальные подарки, которые
-              создаются вручную и сохраняют важные моменты на долгие годы. Вы
-              можете заказать изделие с индивидуальным дизайном: с фотографией,
-              цветами или деревом.
-            </p>
-            <p>
-              В нашем каталоге представлены подарки из эпоксидной смолы: от
-              декоративных изделий до функциональных предметов интерьера. Каждое
-              изделие уникально и создаётся под заказ.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {ALL_PRODUCTS.map((p) => (
-              <ProductCard key={p.slug} product={p} titleLevel={2} />
-            ))}
+
+          <div className="mt-8 lg:mt-10 lg:grid lg:grid-cols-[min(280px,100%)_1fr] lg:items-start lg:gap-8 xl:gap-10">
+            <aside className="mb-8 lg:sticky lg:top-28 lg:mb-0 lg:max-w-[320px]">
+              <CatalogFiltersSidebar
+                extent={extent}
+                activeCat={cat}
+                initialMin={priceRange.min}
+                initialMax={priceRange.max}
+              />
+            </aside>
+
+            <div className="min-w-0">
+              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-fg/70">
+                <p>
+                  Сувениры из эпоксидной смолы — это оригинальные подарки,
+                  которые создаются вручную и сохраняют важные моменты на долгие
+                  годы. Вы можете заказать изделие с индивидуальным дизайном: с
+                  фотографией, цветами или деревом.
+                </p>
+                <p>
+                  В нашем каталоге представлены подарки из эпоксидной смолы: от
+                  декоративных изделий до функциональных предметов интерьера.
+                  Слева выберите категорию и диапазон цены ползунками — сетка
+                  обновится автоматически.
+                </p>
+              </div>
+
+              {filtered.length === 0 ? (
+                <p className="mt-10 rounded-[var(--radius-lg)] border border-green/12 bg-sage-muted/30 px-6 py-10 text-center text-sm text-fg/70">
+                  По таким условиям ничего не нашлось.{" "}
+                  <Link
+                    href="/catalog"
+                    className="font-medium text-green underline-offset-4 hover:underline"
+                  >
+                    Сбросить фильтры
+                  </Link>
+                </p>
+              ) : (
+                <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {filtered.map((p) => (
+                    <ProductCard key={p.slug} product={p} titleLevel={2} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <section

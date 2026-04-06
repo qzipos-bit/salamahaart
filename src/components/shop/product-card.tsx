@@ -3,10 +3,22 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+/** Совпадает с параметром `?cat=` на главной и в каталоге */
+export type ProductCatalogCategory =
+  | "stoly"
+  | "chasy"
+  | "kartiny"
+  | "dekor"
+  | "posuda"
+  | "bukety";
+
 export type Product = {
   slug: string;
   title: string;
   price: string;
+  /** Нижняя граница цены для фильтра в каталоге (из строки `price`) */
+  priceFromRub: number;
+  category: ProductCatalogCategory;
   image: string;
   badge?: "hit" | "sale" | "new";
 };
