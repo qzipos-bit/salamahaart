@@ -201,7 +201,7 @@ export default async function CatalogPage({ searchParams }: Props) {
                   key={item.question}
                   className="group rounded-[var(--radius-lg)] border border-green/10 bg-cream/35 px-5 py-1 shadow-[var(--shadow-sm)] open:bg-cream/50 open:shadow-[var(--shadow)]"
                 >
-                  <summary className="cursor-pointer list-none py-4 font-serif text-base font-semibold leading-snug text-green outline-none marker:content-none [&::-webkit-details-marker]:hidden">
+                  <summary className="cursor-pointer list-none py-4 font-serif text-lg font-semibold leading-snug text-green outline-none marker:content-none [&::-webkit-details-marker]:hidden">
                     <span className="flex items-start justify-between gap-3">
                       <span>{item.question}</span>
                       <span
