@@ -25,13 +25,15 @@ export function Hero() {
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.1] text-green sm:text-5xl lg:text-[3.25rem]">
               Авторские изделия из эпоксидной смолы
             </h1>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-fg/75 sm:text-lg lg:max-w-lg">
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-fg/75 sm:text-lg">
               Столы, панно, декор и сохранение букетов — тихая роскошь, свет и
-              глубина прозрачности в вашем пространстве.
+              глубина прозрачности в вашем пространстве. Создаём изделия из
+              эпоксидной смолы и дерева на заказ: для интерьера, в подарок и для
+              особенных пространств.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Button href="/catalog">Смотреть каталог</Button>
-              <Button href="#custom" variant="secondary">
+              <Button href="/#custom" variant="secondary">
                 Заказать индивидуально
               </Button>
             </div>

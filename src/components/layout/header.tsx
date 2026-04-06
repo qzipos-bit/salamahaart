@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/site";
 
 const nav = [
-  { href: "#about", label: "О мастере" },
-  { href: "#categories", label: "Каталог" },
-  { href: "#gallery", label: "Портфолио" },
-  { href: "#courses", label: "Обучение" },
-  { href: "#contacts", label: "Контакты" },
+  { href: "/#about", label: "О мастере" },
+  { href: "/#categories", label: "Каталог" },
+  { href: "/#gallery", label: "Портфолио" },
+  { href: "/blog", label: "Журнал" },
+  { href: "/#courses", label: "Обучение" },
+  { href: "/#contacts", label: "Контакты" },
 ];
 
 export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {

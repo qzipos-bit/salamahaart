@@ -3,7 +3,7 @@ import { Container } from "@/components/layout/container";
 const items = [
   {
     title: "Доставка",
-    text: "ТК и курьер по РФ. Страхуем крупные изделия.",
+    text: "Доставка ТК и курьер по РФ. Страхуем крупные изделия из эпоксидной смолы и дерева.",
     icon: "▢",
   },
   {

@@ -10,7 +10,7 @@ import { QuizProvider, useQuiz } from "@/components/quiz/quiz-context";
 function Inner({ children }: { children: ReactNode }) {
   const { openQuiz } = useQuiz();
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative z-10 flex min-h-screen flex-col">
       <Header onOpenQuiz={openQuiz} />
       <main className="flex-1 pb-24 md:pb-0">{children}</main>
       <Footer />

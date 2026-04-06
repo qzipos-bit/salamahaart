@@ -17,6 +17,9 @@ export function Contacts() {
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-fg/70">
               Удобнее всего — WhatsApp: пришлю примеры и сориентирую по срокам.
+              Если вы хотите купить изделия из эпоксидной смолы или обсудить
+              индивидуальный проект, напишите мне — помогу подобрать формат,
+              размер и стилистику.
             </p>
             <ul className="mt-8 space-y-4 text-sm">
               <li>
@@ -60,8 +63,8 @@ export function Contacts() {
             </div>
             <div className="mt-6 overflow-hidden rounded-[var(--radius-lg)] border border-green/10 shadow-[var(--shadow-sm)]">
               <iframe
-                title="Карта — Краснодар"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=38.9200%2C45.0000%2C39.1000%2C45.1200&amp;layer=mapnik"
+                title="Карта — п. Знаменский, СНТ Автомобилист-2"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=38.948%2C45.048%2C38.992%2C45.078&amp;layer=mapnik"
                 className="h-[280px] w-full grayscale-[20%] contrast-[0.95]"
                 loading="lazy"
               />

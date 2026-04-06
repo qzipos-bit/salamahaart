@@ -14,7 +14,11 @@ npm run dev
 ## Настройка
 
 1. Скопируйте `.env.example` в `.env.local`.
-2. Укажите `NEXT_PUBLIC_WHATSAPP_URL` и при необходимости правьте `src/lib/site.ts` (телефон, адрес).
+2. Укажите `NEXT_PUBLIC_SITE_URL` (прод: без слэша в конце), `NEXT_PUBLIC_WHATSAPP_URL` и при необходимости правьте `src/lib/site.ts` (телефон, адрес).
+
+## Деплой
+
+Кратко: **Vercel** + переменные из `.env.example`. Подробная инструкция — [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Структура
 

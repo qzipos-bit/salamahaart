@@ -23,6 +23,11 @@ export function FeaturedProducts() {
             Перейти в магазин →
           </Link>
         </div>
+        <p className="mt-6 max-w-3xl text-sm leading-relaxed text-fg/70 sm:text-base">
+          Здесь представлены изделия из эпоксидной смолы и дерева: от журнальных
+          столов до декоративных предметов. Для каждого изделия можно уточнить
+          размер, оттенок, состав и цену.
+        </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURED_PRODUCTS.map((p) => (
             <ProductCard key={p.slug} product={p} />

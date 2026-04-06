@@ -55,6 +55,11 @@ export function Categories() {
             Все товары →
           </Link>
         </div>
+        <p className="mt-6 max-w-3xl text-sm leading-relaxed text-fg/70 sm:text-base">
+          В каталоге собраны изделия из эпоксидной смолы: столы, часы, картины,
+          декор, посуда и сохранённые букеты. Вы можете выбрать готовые
+          эпоксидные изделия или заказать индивидуальную работу под интерьер.
+        </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((c) => (

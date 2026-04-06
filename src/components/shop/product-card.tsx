@@ -11,7 +11,14 @@ export type Product = {
   badge?: "hit" | "sale" | "new";
 };
 
-export function ProductCard({ product }: { product: Product }) {
+type ProductCardProps = {
+  product: Product;
+  /** Уровень заголовка названия товара (на странице каталога — h2 для SEO) */
+  titleLevel?: 2 | 3;
+};
+
+export function ProductCard({ product, titleLevel = 3 }: ProductCardProps) {
+  const TitleTag = titleLevel === 2 ? "h2" : "h3";
   return (
     <article className="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-green/10 bg-cream/40 shadow-[var(--shadow-sm)] transition duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow)]">
       <Link href={`/catalog/${product.slug}`} className="relative aspect-[4/5] overflow-hidden">
@@ -30,9 +37,9 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
       <div className="flex flex-1 flex-col p-5">
         <Link href={`/catalog/${product.slug}`}>
-          <h3 className="font-serif text-lg font-semibold text-green transition group-hover:text-green-deep">
+          <TitleTag className="font-serif text-lg font-semibold text-green transition group-hover:text-green-deep">
             {product.title}
-          </h3>
+          </TitleTag>
         </Link>
         <p className="mt-2 text-sm text-fg/65">{product.price}</p>
         <div className="mt-4">
