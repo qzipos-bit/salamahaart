@@ -7,13 +7,15 @@ const courses = [
     title: "Смола + дерево 2.0",
     mode: "Онлайн",
     text: "От основ до сложных столешниц: техника, ошибки, финиш.",
-    href: SITE.whatsapp,
+    href: "/kurs-smola-derevo",
+    external: false,
   },
   {
     title: "Интенсив в студии",
     mode: "Оффлайн",
     text: "Мини-группа, разбор вашей задачи и практика на материалах.",
     href: SITE.whatsapp,
+    external: true,
   },
 ];
 
@@ -49,11 +51,11 @@ export function Courses() {
               <div className="mt-6">
                 <Button
                   href={c.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={c.external ? "_blank" : undefined}
+                  rel={c.external ? "noopener noreferrer" : undefined}
                   className="w-full sm:w-auto"
                 >
-                  Записаться
+                  {c.external ? "Записаться" : "Программа и запись"}
                 </Button>
               </div>
             </div>

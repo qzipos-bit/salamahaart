@@ -1,4 +1,4 @@
-import { SITE } from "@/lib/site";
+import { SITE, siteOrganizationJsonLdId } from "@/lib/site";
 
 /**
  * Глобальная схема Organization для всех страниц (подключается в root layout).
@@ -28,8 +28,9 @@ export function OrganizationJsonLd() {
     },
   };
 
-  if (base) {
-    data["@id"] = `${base}/#organization`;
+  const orgId = siteOrganizationJsonLdId();
+  if (orgId) {
+    data["@id"] = orgId;
     data.url = base;
     data.logo = `${base}/logo-salamaha.webp`;
   }

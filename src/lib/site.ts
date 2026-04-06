@@ -32,3 +32,9 @@ export const SITE = {
   },
   email: "hello@salamaha.example",
 };
+
+/** Стабильный @id Organization в JSON-LD — тот же URI, что в `OrganizationJsonLd`. */
+export function siteOrganizationJsonLdId(): string | null {
+  const base = SITE.siteUrl;
+  return base ? `${base}/#organization` : null;
+}

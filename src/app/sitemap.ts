@@ -19,7 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/catalog`, lastModified: now },
     { url: `${base}/blog`, lastModified: now },
     { url: `${base}/raschet-raskhoda-smoly`, lastModified: now },
-    { url: `${base}/kalkulyator-stola-iz-smoly`, lastModified: now },
+    { url: `${base}/kalkulyator-stola`, lastModified: now },
+    { url: `${base}/kurs-smola-derevo`, lastModified: now },
     ...blogPosts.map((p) => ({
       url: `${base}/blog/${p.slug}`,
       lastModified: new Date(`${p.publishedAt}T12:00:00`),

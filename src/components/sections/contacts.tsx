@@ -5,6 +5,9 @@ import { SITE } from "@/lib/site";
 
 export function Contacts() {
   return (
+    <>
+      {/* Псевдоним якоря для ссылок вида /#contact */}
+      <div id="contact" className="scroll-mt-24" aria-hidden="true" />
     <section id="contacts" className="scroll-mt-24 py-[var(--section-y)]">
       <Container>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
@@ -73,5 +76,6 @@ export function Contacts() {
         </div>
       </Container>
     </section>
+    </>
   );
 }
