@@ -40,7 +40,7 @@ function TimeUnit({ display, label }: UnitProps) {
           {display}
         </span>
       </div>
-      <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.2em] text-fg/50 sm:text-[11px]">
+      <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.2em] text-cream/45 sm:text-[11px]">
         {label}
       </span>
     </div>
