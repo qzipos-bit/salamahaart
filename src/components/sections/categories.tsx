@@ -1,43 +1,47 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
+import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 
 const items = [
   {
     title: "Столы",
-    href: "/catalog?cat=stoly",
+    href: `${CATALOG_SHOP_PATH}?cat=stoly`,
     img: "/category-stoly.webp",
   },
   {
     title: "Часы",
-    href: "/catalog?cat=chasy",
+    href: `${CATALOG_SHOP_PATH}?cat=chasy`,
     img: "/category-chasy.webp",
   },
   {
     title: "Картины",
-    href: "/catalog?cat=kartiny",
+    href: `${CATALOG_SHOP_PATH}?cat=kartiny`,
     img: "/category-kartiny.webp",
   },
   {
     title: "Декор",
-    href: "/catalog?cat=dekor",
+    href: `${CATALOG_SHOP_PATH}?cat=dekor`,
     img: "/category-dekor.webp",
   },
   {
     title: "Посуда",
-    href: "/catalog?cat=posuda",
+    href: `${CATALOG_SHOP_PATH}?cat=posuda`,
     img: "/category-posuda.webp",
   },
   {
     title: "Букеты в смоле",
-    href: "/catalog?cat=bukety",
+    href: `${CATALOG_SHOP_PATH}?cat=bukety`,
     img: "/category-bukety.webp",
   },
 ];
 
+const categoryCardClass =
+  "group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-green/15 bg-white shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow)]";
+
 export function Categories() {
   return (
-    <section id="categories" className="scroll-mt-24 py-[var(--section-y)]">
+    <section id="categories" className="scroll-mt-28 py-[var(--section-y)]">
       <Container>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -49,7 +53,7 @@ export function Categories() {
             </h2>
           </div>
           <Link
-            href="/catalog"
+            href={CATALOG_SHOP_PATH}
             className="text-sm font-medium text-green underline-offset-4 hover:underline"
           >
             Все товары →
@@ -61,29 +65,32 @@ export function Categories() {
           эпоксидные изделия или заказать индивидуальную работу под интерьер.
         </p>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((c) => (
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 [contain:layout]">
+          {items.map((c, index) => (
             <Link
               key={c.title}
               href={c.href}
-              className="group relative aspect-[4/3] overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)]"
+              className={categoryCardClass}
             >
-              <Image
-                src={c.img}
-                alt={c.title}
-                fill
-                className="object-cover transition duration-500 group-hover:scale-[1.04]"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-              <div className="absolute inset-0 bg-green-deep/0 transition duration-300 group-hover:bg-green-deep/35" />
-              <div className="absolute inset-0 flex items-end p-6">
-                <span className="translate-y-2 text-lg font-semibold text-cream opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+              <div className="relative aspect-[4/3] overflow-hidden bg-sage-muted/25">
+                <Image
+                  src={c.img}
+                  alt={c.title}
+                  fill
+                  priority={index < 3}
+                  className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-green-deep/0 transition-colors duration-300 group-hover:bg-green-deep/8"
+                  aria-hidden
+                />
+              </div>
+              <div className="border-t border-green/10 px-5 py-4">
+                <span className="font-sans text-lg font-bold leading-snug text-green-deep transition-colors group-hover:text-green">
                   {c.title}
                 </span>
               </div>
-              <span className="absolute left-6 top-6 rounded-full bg-cream/90 px-3 py-1 text-xs font-semibold text-green shadow-sm transition group-hover:opacity-0">
-                {c.title}
-              </span>
             </Link>
           ))}
         </div>

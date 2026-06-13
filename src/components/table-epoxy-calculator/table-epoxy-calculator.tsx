@@ -10,15 +10,19 @@ import {
   type TableEpoxyLegs,
   type TableEpoxyProductType,
   type TableEpoxyShape,
-  type TableEpoxyThicknessCm,
+  type TableEpoxyThicknessTier,
 } from "@/lib/table-epoxy-calculator-config";
 import {
   buildTableEpoxyInquiryMessage,
   computeTableEpoxyPrice,
-  formatAreaM2,
   formatRub,
+  getTableEpoxyThicknessRecommendation,
+  tableEpoxyCharacteristicSizeCm,
   type TableEpoxyInputs,
 } from "@/lib/table-epoxy-calculator";
+import {
+  PRICE_DISPLAY_XL_CLASS,
+} from "@/lib/product-typography";
 import { SITE } from "@/lib/site";
 
 function onlyDigits(s: string): string {
@@ -42,11 +46,13 @@ const SHAPE_OPTIONS: { id: TableEpoxyShape; label: string }[] = [
   { id: "rectangle", label: "Прямоугольник" },
 ];
 
-const THICKNESS_OPTIONS: { value: TableEpoxyThicknessCm; label: string }[] =
-  TABLE_EPOXY_CALC.thicknessCm.map((cm) => ({
-    value: cm,
-    label: `${cm} см`,
-  }));
+const THICKNESS_OPTIONS: {
+  id: TableEpoxyThicknessTier;
+  label: string;
+}[] = [
+  { id: "upTo35", label: TABLE_EPOXY_CALC.thicknessTiers.upTo35.label },
+  { id: "from4", label: TABLE_EPOXY_CALC.thicknessTiers.from4.label },
+];
 
 const EDGE_OPTIONS: { id: TableEpoxyEdge; label: string }[] = [
   { id: "smooth", label: "Ровный" },
@@ -60,9 +66,16 @@ const LEG_OPTIONS: { id: TableEpoxyLegs; label: string; hint?: string }[] = [
 ];
 
 const OPTION_CHECKS = [
-  { key: "optionFlowers" as const, label: "Цветы / декор", hint: "+7 000 ₽" },
-  { key: "optionFilm" as const, label: "Защита плёнкой", hint: "от площади" },
-  { key: "optionRush" as const, label: "Срочный заказ", hint: "×1,3" },
+  {
+    key: "optionFlowersFromBouquet" as const,
+    label: "Цветы с букета",
+  },
+  {
+    key: "optionFlowersFromMaster" as const,
+    label: "Цветы мастера",
+  },
+  { key: "optionFilm" as const, label: "Защита плёнкой" },
+  { key: "optionRush" as const, label: "Срочный заказ" },
 ];
 
 const chipBase =
@@ -97,10 +110,12 @@ export function TableEpoxyCalculator() {
   const [lengthRaw, setLengthRaw] = useState("");
   const [widthRaw, setWidthRaw] = useState("");
   const [product, setProduct] = useState<TableEpoxyProductType>("woodResin");
-  const [thicknessCm, setThicknessCm] = useState<TableEpoxyThicknessCm>(3);
+  const [thicknessTier, setThicknessTier] =
+    useState<TableEpoxyThicknessTier>("upTo35");
   const [edge, setEdge] = useState<TableEpoxyEdge>("smooth");
   const [legs, setLegs] = useState<TableEpoxyLegs>("none");
-  const [optionFlowers, setOptionFlowers] = useState(false);
+  const [optionFlowersFromBouquet, setOptionFlowersFromBouquet] = useState(false);
+  const [optionFlowersFromMaster, setOptionFlowersFromMaster] = useState(false);
   const [optionFilm, setOptionFilm] = useState(false);
   const [optionRush, setOptionRush] = useState(false);
 
@@ -130,10 +145,11 @@ export function TableEpoxyCalculator() {
       lengthCm: Number.isFinite(lengthCm) ? lengthCm : minDimensionCm,
       widthCm: Number.isFinite(widthCm) ? widthCm : minDimensionCm,
       product,
-      thicknessCm,
+      thicknessTier,
       edge,
       legs,
-      optionFlowers,
+      optionFlowersFromBouquet,
+      optionFlowersFromMaster,
       optionFilm,
       optionRush,
     };
@@ -144,13 +160,58 @@ export function TableEpoxyCalculator() {
     lengthCm,
     widthCm,
     product,
-    thicknessCm,
+    thicknessTier,
     edge,
     legs,
-    optionFlowers,
+    optionFlowersFromBouquet,
+    optionFlowersFromMaster,
     optionFilm,
     optionRush,
     minDimensionCm,
+  ]);
+
+  const characteristicSizeCm = useMemo(() => {
+    if (!inputs) return null;
+    return tableEpoxyCharacteristicSizeCm(inputs);
+  }, [inputs]);
+
+  const recommendedThicknessTier = useMemo(() => {
+    if (characteristicSizeCm == null) return null;
+    return getTableEpoxyThicknessRecommendation(characteristicSizeCm);
+  }, [characteristicSizeCm]);
+
+  const thicknessHint = useMemo(() => {
+    if (characteristicSizeCm == null || recommendedThicknessTier == null) {
+      return null;
+    }
+    const sizeLabel =
+      shape === "circle"
+        ? `диаметр ${characteristicSizeCm} см`
+        : `меньшая сторона ${characteristicSizeCm} см`;
+    const recommendedLabel =
+      TABLE_EPOXY_CALC.thicknessTiers[recommendedThicknessTier].label;
+    const sizeRule =
+      characteristicSizeCm <= 40
+        ? "Для диаметра до 40 см рекомендуется толщина до 3,5 см."
+        : characteristicSizeCm <= 50
+          ? "Для диаметра до 50 см рекомендуется 4–5 см."
+          : "Для больших размеров рекомендуется толщина от 4 см.";
+    const fillingNote =
+      optionFlowersFromBouquet || optionFlowersFromMaster
+        ? "При заливке с цветами может потребоваться увеличенная толщина — обсудим при расчёте."
+        : "Толщина также зависит от наполнения стола (цветы, декор в смоле).";
+    return {
+      sizeLabel,
+      recommendedLabel,
+      sizeRule,
+      fillingNote,
+    };
+  }, [
+    characteristicSizeCm,
+    recommendedThicknessTier,
+    shape,
+    optionFlowersFromBouquet,
+    optionFlowersFromMaster,
   ]);
 
   const breakdown = useMemo(
@@ -164,15 +225,39 @@ export function TableEpoxyCalculator() {
       : "";
 
   const setOption = (key: (typeof OPTION_CHECKS)[number]["key"], v: boolean) => {
-    if (key === "optionFlowers") setOptionFlowers(v);
+    if (key === "optionFlowersFromBouquet") setOptionFlowersFromBouquet(v);
+    if (key === "optionFlowersFromMaster") setOptionFlowersFromMaster(v);
     if (key === "optionFilm") setOptionFilm(v);
     if (key === "optionRush") setOptionRush(v);
   };
 
   const optionValue = (key: (typeof OPTION_CHECKS)[number]["key"]) => {
-    if (key === "optionFlowers") return optionFlowers;
+    if (key === "optionFlowersFromBouquet") return optionFlowersFromBouquet;
+    if (key === "optionFlowersFromMaster") return optionFlowersFromMaster;
     if (key === "optionFilm") return optionFilm;
     return optionRush;
+  };
+
+  const handleInquiryClick = () => {
+    if (!inputs || !breakdown || !inquiryMessage) return;
+
+    void fetch("/api/table-calculator/inquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: inquiryMessage,
+        optionFlowersFromBouquet: inputs.optionFlowersFromBouquet,
+        optionFlowersFromMaster: inputs.optionFlowersFromMaster,
+      }),
+    }).catch(() => {
+      /* WhatsApp открывается в любом случае */
+    });
+
+    window.open(
+      whatsappInquiryUrl(inquiryMessage),
+      "_blank",
+      "noopener,noreferrer",
+    );
   };
 
   return (
@@ -318,22 +403,43 @@ export function TableEpoxyCalculator() {
           {/* Толщина */}
           <div>
             <FieldLabel>Толщина</FieldLabel>
+            <p className="mb-3 text-sm leading-relaxed text-[var(--fg)]/60">
+              Для диаметра до 40 см рекомендуется 3 см (группа до 3,5 см). Для
+              диаметра до 50 см — 4–5 см (группа от 4 см). Толщина также
+              зависит от наполнения стола.
+            </p>
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {THICKNESS_OPTIONS.map((t) => (
                 <button
-                  key={t.value}
+                  key={t.id}
                   type="button"
-                  onClick={() => setThicknessCm(t.value)}
+                  onClick={() => setThicknessTier(t.id)}
                   className={`${chipBase} ${
-                    thicknessCm === t.value
+                    thicknessTier === t.id
                       ? "border-[var(--gold)]/55 bg-[var(--sage-muted)]/90 text-[var(--green-deep)] ring-2 ring-[var(--gold)]/30"
                       : "border-[var(--green)]/12 bg-white/60 hover:border-[var(--gold)]/35"
                   }`}
                 >
-                  {t.label}
+                  <span className="flex items-center gap-2">
+                    {t.label}
+                    {recommendedThicknessTier === t.id && dimensionsValid ? (
+                      <span className="text-xs font-normal uppercase tracking-wide text-[var(--gold)]">
+                        рекомендуем
+                      </span>
+                    ) : null}
+                  </span>
                 </button>
               ))}
             </div>
+            {thicknessHint ? (
+              <p className="mt-3 text-sm leading-relaxed text-[var(--fg)]/65">
+                Для вашего размера ({thicknessHint.sizeLabel}):{" "}
+                <span className="font-medium text-[var(--green-deep)]">
+                  {thicknessHint.recommendedLabel}
+                </span>
+                . {thicknessHint.sizeRule} {thicknessHint.fillingNote}
+              </p>
+            ) : null}
           </div>
 
           {/* Край */}
@@ -398,11 +504,8 @@ export function TableEpoxyCalculator() {
                     onChange={(e) => setOption(o.key, e.target.checked)}
                     className="mt-1 size-5 rounded-md border-[var(--green)]/25 text-[var(--green)] focus:ring-[var(--gold)]/40"
                   />
-                  <span className="flex flex-1 flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                    <span className="font-medium text-[var(--fg)]/90">
-                      {o.label}
-                    </span>
-                    <span className="text-sm text-[var(--fg)]/50">{o.hint}</span>
+                  <span className="font-medium text-[var(--fg)]/90">
+                    {o.label}
                   </span>
                 </label>
               ))}
@@ -422,45 +525,23 @@ export function TableEpoxyCalculator() {
               <h2 className="text-center font-[family-name:var(--font-serif)] text-2xl text-[var(--green-deep)] md:text-3xl">
                 {copy.resultTitle}
               </h2>
-              <p className="mt-4 text-center text-3xl font-semibold tracking-tight text-[var(--green-deep)] sm:text-4xl md:text-[2.5rem]">
+              <p className={`mt-4 text-center ${PRICE_DISPLAY_XL_CLASS}`}>
                 от {formatRub(breakdown.rangeLowRub)} до{" "}
                 {formatRub(breakdown.rangeHighRub)}
               </p>
-
-              <ul className="mx-auto mt-8 max-w-md space-y-3 rounded-2xl border border-[var(--green)]/8 bg-[var(--cream)]/50 px-5 py-5 text-[15px] sm:px-6">
-                <li className="flex justify-between gap-4 border-b border-[var(--green)]/8 pb-3">
-                  <span className="text-[var(--fg)]/65">Площадь</span>
-                  <span className="font-medium tabular-nums text-[var(--fg)]">
-                    {formatAreaM2(breakdown.areaM2)} м²
-                  </span>
-                </li>
-                <li className="flex justify-between gap-4 border-b border-[var(--green)]/8 pb-3">
-                  <span className="text-[var(--fg)]/65">Базовый расчёт</span>
-                  <span className="font-medium tabular-nums text-[var(--fg)]">
-                    {formatRub(Math.round(breakdown.baseBundleRub))}
-                  </span>
-                </li>
-                <li className="flex justify-between gap-4 pt-1">
-                  <span className="text-[var(--fg)]/65">Итоговая сумма</span>
-                  <span className="font-semibold tabular-nums text-[var(--green-deep)]">
-                    {formatRub(breakdown.totalRub)}
-                  </span>
-                </li>
-              </ul>
 
               <p className="mx-auto mt-6 max-w-lg text-center text-sm leading-relaxed text-[var(--fg)]/60">
                 {copy.disclaimer}
               </p>
 
               <div className="mt-8 flex flex-col items-center gap-4">
-                <a
-                  href={whatsappInquiryUrl(inquiryMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={handleInquiryClick}
                   className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--green)] px-8 text-[15px] font-semibold tracking-wide text-white shadow-md transition hover:bg-[var(--green-deep)] hover:shadow-lg active:scale-[0.98]"
                 >
                   {copy.cta}
-                </a>
+                </button>
                 <Link
                   href="/#contact"
                   className="text-sm font-medium text-[var(--green)]/80 underline-offset-4 transition hover:text-[var(--green-deep)] hover:underline"

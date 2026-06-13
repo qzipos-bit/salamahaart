@@ -30,7 +30,7 @@ export const SITE = {
     addressCountry: "RU",
     streetAddress: "СНТ Автомобилист-2, ул. Звездная, 431",
   },
-  email: "hello@salamaha.example",
+  email: "salamaha.2012@mail.ru",
 };
 
 /** Стабильный @id Organization в JSON-LD — тот же URI, что в `OrganizationJsonLd`. */

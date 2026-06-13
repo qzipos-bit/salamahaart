@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/layout/container";
 
 const stats = [
-  { value: "10+", label: "лет в материале" },
+  { value: "Большой опыт", label: "работы" },
   { value: "100%", label: "ручная работа" },
   { value: "РФ", label: "доставка и самовывоз" },
 ];
@@ -50,7 +50,7 @@ export function About() {
                   key={s.label}
                   className="rounded-[var(--radius)] border border-green/10 bg-sage-muted/50 px-4 py-5 text-center"
                 >
-                  <p className="font-serif text-2xl font-semibold text-green">
+                  <p className="font-serif text-lg font-semibold leading-snug text-green sm:text-xl">
                     {s.value}
                   </p>
                   <p className="mt-1 text-xs text-fg/60">{s.label}</p>

@@ -17,6 +17,8 @@ export type SeoCatalogLanding = {
   description: string;
   h1: string;
   intro: [string, string];
+  /** Карточка на хабе /catalog */
+  hubImage?: string;
   /** Slug товаров из ALL_PRODUCTS; пусто — только текст и CTA */
   productSlugs: string[];
   /** Доп. сегменты крошек перед текущей страницей (href опционален) */
@@ -53,6 +55,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Декоративные столики" }],
     collectionHeading: "Коллекция столиков для завтрака",
     introVariant: "card",
+    hubImage: "/quick-lead-botanical-table.webp",
     faq: BREAKFAST_TABLE_FAQ,
   },
   tarelkiBlyuda: {
@@ -78,6 +81,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Посуда и сервировка" }],
     collectionHeading: "Тарелки и блюда в каталоге",
     introVariant: "card",
+    hubImage: "/product-fotaramka-30x40.webp",
     faq: TARELKI_BLYUDA_FAQ,
   },
   podnosy: {
@@ -103,6 +107,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Сервировка и декор" }],
     collectionHeading: "Подносы в каталоге",
     introVariant: "card",
+    hubImage: "/product-podnos.webp",
     faq: PODNOSY_FAQ,
   },
   chasy: {
@@ -128,6 +133,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Часы и картины" }],
     collectionHeading: "Часы в каталоге",
     introVariant: "card",
+    hubImage: "/product-chasy-live.webp",
     faq: CHASY_FAQ,
   },
   kartiny: {
@@ -153,6 +159,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Часы и картины" }],
     collectionHeading: "Картины и панно в каталоге",
     introVariant: "card",
+    hubImage: "/category-kartiny.webp",
     faq: KARTINY_FAQ,
   },
   servirovochnyeDoski: {
@@ -179,6 +186,7 @@ export const SEO_CATALOG_LANDINGS = {
     breadcrumbTrail: [{ label: "Кухня и сервировка" }],
     collectionHeading: "Доски и менажницы в каталоге",
     introVariant: "card",
+    hubImage: "/category-posuda.webp",
     faq: SERVIROVOCHNYE_DOSKI_FAQ,
   },
 } as const satisfies Record<string, SeoCatalogLanding>;

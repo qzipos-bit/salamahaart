@@ -14,6 +14,10 @@ import {
   ValuePropIcon,
 } from "@/components/courses/course-landing-graphics";
 import { CourseCountdownBanner } from "@/components/courses/course-countdown-banner";
+import {
+  PRICE_DISPLAY_HERO_CLASS,
+  PRICE_INLINE_EMPHASIS_CLASS,
+} from "@/lib/product-typography";
 
 const waHref = smolaDerevoWhatsAppHref();
 const priceLabel = formatCoursePrice(COURSE_SMOLA_DEREVO.priceRub);
@@ -57,7 +61,7 @@ function DetailsModule({
 
 export function SmolaDerevoLanding() {
   return (
-    <article className="pb-24 md:pb-0">
+    <article className="pb-24 overflow-anchor-none md:pb-0">
       {/* Hero */}
       <section
         className="relative overflow-hidden border-b border-green/10 bg-sage-muted/30 py-12 sm:py-16 md:py-20"
@@ -96,7 +100,7 @@ export function SmolaDerevoLanding() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-fg/50">
                   Стоимость
                 </span>
-                <span className="font-[family-name:var(--font-serif)] text-2xl text-green-deep sm:text-3xl">
+                <span className={PRICE_DISPLAY_HERO_CLASS}>
                   {priceLabel}
                 </span>
               </div>
@@ -482,8 +486,12 @@ export function SmolaDerevoLanding() {
               >
                 Записаться на курс
               </a>
-              <p className="text-center text-xs text-cream/55 lg:text-right">
-                {priceLabel} · оплата частями и другие варианты в WhatsApp
+              <p className="text-center text-sm font-semibold tabular-nums text-cream/85 lg:text-right">
+                <span className="text-gold">{priceLabel}</span>
+                <span className="text-cream/70">
+                  {" "}
+                  · оплата частями и другие варианты в WhatsApp
+                </span>
               </p>
             </div>
           </div>
@@ -673,7 +681,7 @@ export function SmolaDerevoLanding() {
             </h2>
             <p className="mt-3 text-fg/70">
               Стоимость —{" "}
-              <span className="font-semibold text-green-deep">{priceLabel}</span>
+              <span className={PRICE_INLINE_EMPHASIS_CLASS}>{priceLabel}</span>
               . Напишите в WhatsApp: пришлём варианты оплаты и ответим на
               вопросы.
             </p>

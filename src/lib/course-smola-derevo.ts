@@ -40,6 +40,10 @@ export const COURSE_SMOLA_DEREVO = {
    */
   countdown: {
     endsAtIso: "2026-04-08T23:59:59+03:00",
+    /** Зациклить таймер: после дедлайна отсчёт снова с полного цикла. */
+    loop: true,
+    /** Длина цикла в днях (совпадает с «через 2 дня» в заголовке). */
+    cycleDays: 2,
     headline: "Новый поток через 2 дня — скидка на запись",
     subline:
       "Фиксируйте цену до конца таймера. После дедлайна стоимость и дата потока могут измениться.",
@@ -437,4 +441,30 @@ export function formatCoursePrice(rub: number): string {
     currency: "RUB",
     maximumFractionDigits: 0,
   }).format(rub);
+}
+
+type CountdownConfig = typeof COURSE_SMOLA_DEREVO.countdown;
+
+/** Оставшееся время таймера в мс (с зацикливанием, если `loop` включён). */
+export function getCourseCountdownRemainingMs(
+  now: number,
+  cfg: CountdownConfig,
+): number {
+  const anchorEndMs = new Date(cfg.endsAtIso).getTime();
+  if (Number.isNaN(anchorEndMs)) return 0;
+
+  const cycleDays = cfg.cycleDays ?? 0;
+  const cycleMs = cycleDays > 0 ? cycleDays * 24 * 60 * 60 * 1000 : 0;
+
+  if (!cfg.loop || cycleMs <= 0) {
+    return Math.max(0, anchorEndMs - now);
+  }
+
+  if (now <= anchorEndMs) {
+    return anchorEndMs - now;
+  }
+
+  const elapsedSinceFirstEnd = now - anchorEndMs;
+  const remainder = elapsedSinceFirstEnd % cycleMs;
+  return remainder === 0 ? cycleMs : cycleMs - remainder;
 }

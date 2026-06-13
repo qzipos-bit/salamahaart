@@ -2,6 +2,8 @@ import type {
   Product,
   ProductCatalogCategory,
 } from "@/components/shop/product-card";
+import type { CatalogPriceSort } from "@/lib/catalog-sort";
+import { parseCatalogSortParam } from "@/lib/catalog-sort";
 
 export const CATALOG_CATEGORY_LABELS: Record<ProductCatalogCategory, string> = {
   stoly: "Столы",
@@ -42,14 +44,24 @@ export function formatRubShort(n: number): string {
   return `${new Intl.NumberFormat("ru-RU").format(n)} ₽`;
 }
 
+/** Хаб каталогов (разделы из подвала). */
+export const CATALOG_HUB_PATH = "/catalog";
+
+/** Все изделия в одном списке с фильтрами. */
+export const CATALOG_SHOP_PATH = "/catalog/vse-tovary";
+
 export function catalogHref(params: {
   cat?: string;
   priceMin?: number;
   priceMax?: number;
+  sort?: CatalogPriceSort | "";
   extent: { min: number; max: number };
+  basePath?: string;
 }): string {
+  const base = params.basePath ?? CATALOG_SHOP_PATH;
   const sp = new URLSearchParams();
   if (params.cat) sp.set("cat", params.cat);
+  if (params.sort) sp.set("sort", params.sort);
   const { extent } = params;
   const lo = params.priceMin ?? extent.min;
   const hi = params.priceMax ?? extent.max;
@@ -59,7 +71,54 @@ export function catalogHref(params: {
     sp.set("priceMax", String(Math.round(hi)));
   }
   const q = sp.toString();
-  return q ? `/catalog?${q}` : "/catalog";
+  return q ? `${base}?${q}` : base;
+}
+
+/** Обновляет URL магазина без навигации Next.js — без мерцания сетки. */
+export function syncCatalogShopUrl(
+  params: {
+    cat?: string;
+    priceMin?: number;
+    priceMax?: number;
+    sort?: CatalogPriceSort | "";
+    extent: { min: number; max: number };
+  },
+): void {
+  if (typeof window === "undefined") return;
+  const href = catalogHref({ ...params, basePath: CATALOG_SHOP_PATH });
+  const current = `${window.location.pathname}${window.location.search}`;
+  if (current === href) return;
+  window.history.replaceState(null, "", href);
+}
+
+/** Читает фильтры из query string (клиент, без server searchParams). */
+export function parseCatalogShopUrlState(
+  extent: { min: number; max: number },
+  search?: string,
+): {
+  cat: ProductCatalogCategory | "";
+  sort: CatalogPriceSort | "";
+  min: number;
+  max: number;
+} {
+  const sp = new URLSearchParams(search ?? "");
+  const catRaw = sp.get("cat");
+  const cat: ProductCatalogCategory | "" =
+    catRaw && CATALOG_CATEGORIES.includes(catRaw as ProductCatalogCategory)
+      ? (catRaw as ProductCatalogCategory)
+      : "";
+  const sort = parseCatalogSortParam(sp.get("sort") ?? undefined);
+  const price = parseCatalogPriceParams(
+    sp.get("priceMin") ?? undefined,
+    sp.get("priceMax") ?? undefined,
+    extent,
+  );
+  return {
+    cat,
+    sort,
+    min: price.min,
+    max: price.max,
+  };
 }
 
 export function parseCatalogPriceParams(

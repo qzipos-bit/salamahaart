@@ -54,7 +54,7 @@ export default function ResinCalculatorPage() {
           <h1 className="mt-6 font-serif text-3xl font-semibold text-green sm:text-4xl">
             Расчёт расхода смолы
           </h1>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-fg/75 sm:text-base">
+          <p className="mt-3 max-w-3xl font-sans text-base leading-relaxed text-fg/80 sm:text-lg">
             Онлайн-калькулятор помогает оценить массу смеси и доли компонентов
             перед заливкой. Результат ориентировочный — уточните плотность и
             пропорции по паспорту вашей системы.

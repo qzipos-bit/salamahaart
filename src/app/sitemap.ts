@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllBlogPosts } from "@/lib/blog";
 import { ALL_PRODUCTS } from "@/lib/products";
+import { MASTERS_CATALOG_PATH, MASTERS_PRODUCTS } from "@/lib/masters-products";
 import { allSeoLandingPaths } from "@/lib/seo-catalog-landings";
 import { SITE } from "@/lib/site";
 
@@ -17,6 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${base}/`, lastModified: now },
     { url: `${base}/catalog`, lastModified: now },
+    { url: `${base}/catalog/vse-tovary`, lastModified: now },
+    { url: `${base}${MASTERS_CATALOG_PATH}`, lastModified: now },
     { url: `${base}/blog`, lastModified: now },
     { url: `${base}/raschet-raskhoda-smoly`, lastModified: now },
     { url: `${base}/kalkulyator-stola`, lastModified: now },
@@ -31,6 +34,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...ALL_PRODUCTS.map((p) => ({
       url: `${base}/catalog/${p.slug}`,
+      lastModified: now,
+    })),
+    ...MASTERS_PRODUCTS.map((p) => ({
+      url: `${base}${MASTERS_CATALOG_PATH}/${p.slug}`,
       lastModified: now,
     })),
   ];

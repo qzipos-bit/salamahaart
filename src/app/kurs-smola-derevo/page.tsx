@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { CourseLandingStickyCta } from "@/components/courses/course-landing-sticky-cta";
+import { ScrollToTopOnMount } from "@/components/layout/scroll-to-top-on-mount";
 import { SmolaDerevoLanding } from "@/components/courses/smola-derevo-landing";
 import {
   COURSE_SMOLA_DEREVO,
@@ -86,6 +87,7 @@ function courseJsonLd() {
 export default function KursSmolaDerevoPage() {
   return (
     <LandingShell>
+      <ScrollToTopOnMount matchPath="/kurs-smola-derevo" />
       {courseJsonLd()}
       <SmolaDerevoLanding />
       <CourseLandingStickyCta />

@@ -5,9 +5,15 @@ import Link from "next/link";
 import {
   COURSE_SMOLA_DEREVO,
   formatCoursePrice,
+  getCourseCountdownRemainingMs,
   smolaDerevoWhatsAppHref,
 } from "@/lib/course-smola-derevo";
 import { Container } from "@/components/layout/container";
+import {
+  PRICE_COUNTDOWN_UNIT_CLASS,
+  PRICE_ON_DARK_LG_CLASS,
+  PRICE_STRIKETHROUGH_ON_DARK_CLASS,
+} from "@/lib/product-typography";
 
 function ruPlural(
   n: number,
@@ -36,7 +42,7 @@ function TimeUnit({ display, label }: UnitProps) {
   return (
     <div className="flex min-w-[4.5rem] flex-col items-center sm:min-w-[5.5rem]">
       <div className="w-full rounded-2xl border border-gold/35 bg-gradient-to-b from-cream to-sage-muted/40 px-3 py-3 text-center shadow-[var(--shadow-sm)] sm:px-4 sm:py-4">
-        <span className="font-[family-name:var(--font-serif)] text-3xl font-semibold tabular-nums tracking-tight text-green-deep sm:text-4xl">
+        <span className={PRICE_COUNTDOWN_UNIT_CLASS}>
           {display}
         </span>
       </div>
@@ -50,7 +56,7 @@ function TimeUnit({ display, label }: UnitProps) {
 export function CourseCountdownBanner() {
   const wa = smolaDerevoWhatsAppHref();
   const cfg = COURSE_SMOLA_DEREVO.countdown;
-  const endMs = new Date(cfg.endsAtIso).getTime();
+  const anchorEndMs = new Date(cfg.endsAtIso).getTime();
   const price = formatCoursePrice(COURSE_SMOLA_DEREVO.priceRub);
   const showOld =
     typeof cfg.oldPriceRub === "number" &&
@@ -67,8 +73,9 @@ export function CourseCountdownBanner() {
   }, []);
 
   const mounted = now !== null;
-  const diff = mounted ? Math.max(0, endMs - now) : 0;
-  const expired = mounted && diff <= 0;
+  const diff = mounted ? getCourseCountdownRemainingMs(now, cfg) : 0;
+  const expired =
+    mounted && !cfg.loop && diff <= 0;
 
   const secTotal = Math.floor(diff / 1000);
   const days = Math.floor(secTotal / 86400);
@@ -76,7 +83,7 @@ export function CourseCountdownBanner() {
   const minutes = Math.floor((secTotal % 3600) / 60);
   const seconds = secTotal % 60;
 
-  if (Number.isNaN(endMs)) return null;
+  if (Number.isNaN(anchorEndMs)) return null;
 
   return (
     <section
@@ -102,11 +109,11 @@ export function CourseCountdownBanner() {
               </p>
               <div className="mt-5 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 {showOld && oldPrice ? (
-                  <span className="text-lg text-cream/45 line-through decoration-gold/50">
+                  <span className={PRICE_STRIKETHROUGH_ON_DARK_CLASS}>
                     {oldPrice}
                   </span>
                 ) : null}
-                <span className="font-[family-name:var(--font-serif)] text-2xl font-semibold text-gold sm:text-3xl">
+                <span className={PRICE_ON_DARK_LG_CLASS}>
                   {price}
                 </span>
                 {showOld ? (

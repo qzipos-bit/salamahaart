@@ -4,7 +4,7 @@ import {
   type TableEpoxyLegs,
   type TableEpoxyProductType,
   type TableEpoxyShape,
-  type TableEpoxyThicknessCm,
+  type TableEpoxyThicknessTier,
 } from "@/lib/table-epoxy-calculator-config";
 
 export type TableEpoxyInputs = {
@@ -13,25 +13,27 @@ export type TableEpoxyInputs = {
   lengthCm: number;
   widthCm: number;
   product: TableEpoxyProductType;
-  thicknessCm: TableEpoxyThicknessCm;
+  thicknessTier: TableEpoxyThicknessTier;
   edge: TableEpoxyEdge;
   legs: TableEpoxyLegs;
-  optionFlowers: boolean;
+  optionFlowersFromBouquet: boolean;
+  optionFlowersFromMaster: boolean;
   optionFilm: boolean;
   optionRush: boolean;
 };
 
 export type TableEpoxyBreakdown = {
   areaM2: number;
-  /** После м², толщины и края — без ножек, декора, плёнки, срочности */
+  /** После м², толщины и края — до минимума */
   baseBundleRub: number;
+  /** База с учётом минимума 15 000 ₽ (без ножек и доп. опций) */
+  baseFlooredRub: number;
   legsRub: number;
   decorRub: number;
   filmRub: number;
   subtotalBeforeRRub: number;
-  /** После срочности (×1.3), до минимума */
+  /** После срочности (×1.3) */
   totalBeforeFloorRub: number;
-  /** Итог с учётом минимума 15 000 ₽ */
   totalRub: number;
   rangeLowRub: number;
   rangeHighRub: number;
@@ -52,10 +54,25 @@ function baseCircleAreaM2(diameterCm: number): number {
   return PI * rM * rM;
 }
 
+/** Характерный размер для рекомендации толщины: диаметр или меньшая сторона. */
+export function tableEpoxyCharacteristicSizeCm(
+  i: Pick<TableEpoxyInputs, "shape" | "diameterCm" | "lengthCm" | "widthCm">,
+): number {
+  if (i.shape === "circle") return i.diameterCm;
+  return Math.min(i.lengthCm, i.widthCm);
+}
+
+export function getTableEpoxyThicknessRecommendation(
+  characteristicSizeCm: number,
+): TableEpoxyThicknessTier {
+  if (characteristicSizeCm <= 40) return "upTo35";
+  return "from4";
+}
+
 export function computeTableEpoxyPrice(i: TableEpoxyInputs): TableEpoxyBreakdown {
   const {
     pricePerM2,
-    thicknessCoeff,
+    thicknessTiers,
     edgeCoeff,
     legsRub: legsTable,
     decorFlowersRub,
@@ -71,10 +88,14 @@ export function computeTableEpoxyPrice(i: TableEpoxyInputs): TableEpoxyBreakdown
     i.product === "woodResin" ? pricePerM2.woodResin : pricePerM2.resinOnly;
 
   const rawBase = areaM2 * rubM2;
-  const baseBundleRub = rawBase * thicknessCoeff[i.thicknessCm] * edgeCoeff[i.edge];
+  const thicknessCoeff = thicknessTiers[i.thicknessTier].coeff;
+  const baseBundleRub = rawBase * thicknessCoeff * edgeCoeff[i.edge];
+  const baseFlooredRub = Math.max(minTotalRub, Math.round(baseBundleRub));
 
   const legs = legsTable[i.legs];
-  const decor = i.optionFlowers ? decorFlowersRub : 0;
+  const decor =
+    (i.optionFlowersFromBouquet ? decorFlowersRub : 0) +
+    (i.optionFlowersFromMaster ? decorFlowersRub : 0);
 
   const filmRefArea = baseCircleAreaM2(filmBaseCircleDiameterCm);
   const film =
@@ -82,15 +103,16 @@ export function computeTableEpoxyPrice(i: TableEpoxyInputs): TableEpoxyBreakdown
       ? Math.round(filmBasePriceRub * (areaM2 / filmRefArea))
       : 0;
 
-  const subtotalBeforeR = baseBundleRub + legs + decor + film;
+  const subtotalBeforeR = baseFlooredRub + legs + decor + film;
   const totalBeforeFloor = i.optionRush ? subtotalBeforeR * rushMult : subtotalBeforeR;
-  const totalRub = Math.max(minTotalRub, Math.round(totalBeforeFloor));
+  const totalRub = Math.round(totalBeforeFloor);
   const rangeLowRub = Math.round(totalRub * displayRange.minMult);
   const rangeHighRub = Math.round(totalRub * displayRange.maxMult);
 
   return {
     areaM2,
     baseBundleRub,
+    baseFlooredRub,
     legsRub: legs,
     decorRub: decor,
     filmRub: film,
@@ -149,13 +171,15 @@ export function buildTableEpoxyInquiryMessage(
       : `длина ${i.lengthCm} см, ширина ${i.widthCm} см`;
 
   const extras: string[] = [];
-  if (i.optionFlowers) extras.push("цветы / декор");
+  if (i.optionFlowersFromBouquet) extras.push("цветы с букета");
+  if (i.optionFlowersFromMaster) extras.push("цветы мастера");
   if (i.optionFilm) extras.push("защита плёнкой");
   if (i.optionRush) extras.push("срочный заказ");
   const extrasLine =
     extras.length > 0 ? extras.join(", ") : "без дополнительных опций";
 
   const rangeLine = `от ${formatRub(b.rangeLowRub)} до ${formatRub(b.rangeHighRub)}`;
+  const thicknessLabel = TABLE_EPOXY_CALC.thicknessTiers[i.thicknessTier].label;
 
   return [
     "Здравствуйте! Хочу уточнить стоимость стола из смолы.",
@@ -163,7 +187,7 @@ export function buildTableEpoxyInquiryMessage(
     `Форма: ${SHAPE_LABEL[i.shape]}`,
     `Размеры: ${dims}`,
     `Материал: ${PRODUCT_LABEL[i.product]}`,
-    `Толщина: ${i.thicknessCm} см`,
+    `Толщина: ${thicknessLabel}`,
     `Край: ${EDGE_LABEL[i.edge]}`,
     `Ножки: ${LEGS_LABEL[i.legs]}`,
     `Дополнительно: ${extrasLine}`,

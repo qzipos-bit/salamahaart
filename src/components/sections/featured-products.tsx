@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { ProductCard } from "@/components/shop/product-card";
+import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import { FEATURED_PRODUCTS } from "@/lib/products";
 
 export function FeaturedProducts() {
@@ -17,7 +18,7 @@ export function FeaturedProducts() {
             </h2>
           </div>
           <Link
-            href="/catalog"
+            href={CATALOG_SHOP_PATH}
             className="text-sm font-medium text-green underline-offset-4 hover:underline"
           >
             Перейти в магазин →
@@ -28,9 +29,9 @@ export function FeaturedProducts() {
           столов до декоративных предметов. Для каждого изделия можно уточнить
           размер, оттенок, состав и цену.
         </p>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 [contain:layout]">
           {FEATURED_PRODUCTS.map((p) => (
-            <ProductCard key={p.slug} product={p} />
+            <ProductCard key={p.slug} product={p} stableLayout />
           ))}
         </div>
       </Container>

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { ALL_PRODUCTS } from "@/lib/products";
-import { SITE } from "@/lib/site";
+import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -14,10 +14,6 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = ALL_PRODUCTS.find((p) => p.slug === slug);
   if (!product) notFound();
-
-  const text = encodeURIComponent(
-    `Здравствуйте! Интересует: ${product.title} (${product.price}).`,
-  );
 
   return (
     <LandingShell>
@@ -46,26 +42,27 @@ export default async function ProductPage({ params }: Props) {
               ) : null}
             </div>
             <div>
-              <h1 className="font-serif text-4xl font-semibold text-green">
+              <h1 className={PRODUCT_PAGE_TITLE_CLASS}>
                 {product.title}
               </h1>
-              <p className="mt-4 text-xl text-fg/80">{product.price}</p>
-              <p className="mt-6 text-sm leading-relaxed text-fg/70">
+              <p className={PRODUCT_PAGE_PRICE_CLASS}>
+                {product.price}
+              </p>
+              <p className="mt-6 text-base leading-relaxed text-fg/85">
                 Изделие изготавливается вручную. Срок и финальная стоимость
-                зависят от размеров и пожеланий по пигменту/вставкам. Напишите
+                зависят от размеров и пожеланий по пигменту и вставкам. Напишите
                 в WhatsApp — пришлю варианты и смету.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button
-                  href={`${SITE.whatsapp}?text=${text}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Заказать в WhatsApp
-                </Button>
-                <Button href="/catalog" variant="secondary">
-                  Другие товары
-                </Button>
+                <ProductCartActions
+                  slug={product.slug}
+                  title={product.title}
+                  price={product.price}
+                  priceRub={product.priceFromRub}
+                  backHref="/catalog"
+                  catalog="catalog"
+                  productPath={`/catalog/${product.slug}`}
+                />
               </div>
             </div>
           </div>

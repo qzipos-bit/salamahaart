@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
+import { CATALOG_HUB_PATH, CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import { SEO_CATALOG_LANDINGS } from "@/lib/seo-catalog-landings";
 import { SITE } from "@/lib/site";
 
@@ -52,8 +53,21 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/catalog" className="hover:text-green">
-                    Магазин
+                  <Link href={CATALOG_HUB_PATH} className="hover:text-green">
+                    Каталог изделий
+                  </Link>
+                </li>
+                <li>
+                  <Link href={CATALOG_SHOP_PATH} className="hover:text-green">
+                    Все товары
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/tovary-dlya-masterov"
+                    className="hover:text-green"
+                  >
+                    Товары для мастеров
                   </Link>
                 </li>
                 <li>

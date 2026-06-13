@@ -3,6 +3,14 @@
 import { useMemo, useState, type ComponentType } from "react";
 import { RESIN_CALCULATOR_FAQ } from "@/lib/resin-calculator-faq";
 import {
+  RESIN_CALC_BODY_CLASS,
+  RESIN_CALC_INPUT_CLASS,
+  RESIN_CALC_INPUT_SUFFIX_CLASS,
+  RESIN_CALC_RESULT_LABEL_CLASS,
+  RESIN_CALC_RESULT_LINE_CLASS,
+  RESIN_CALC_RESULT_TOTAL_CLASS,
+} from "@/lib/product-typography";
+import {
   IconIrregular,
   IconPartsMix,
   IconPourVolume,
@@ -112,20 +120,20 @@ function FieldRow({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-medium text-green/85">
+      <label htmlFor={id} className={RESIN_CALC_RESULT_LABEL_CLASS}>
         {label}
       </label>
-      <div className="mt-1 flex items-center gap-2">
+      <div className="mt-1.5 flex items-center gap-2">
         <input
           id={id}
           type="text"
           inputMode="decimal"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="min-w-0 flex-1 rounded-xl border border-green/15 bg-cream/30 px-3 py-2.5 text-sm text-fg outline-none transition focus:border-gold/70 focus:bg-white focus:ring-2 focus:ring-gold/15"
+          className={`min-w-0 flex-1 rounded-xl border border-green/15 bg-cream/30 px-4 py-3 outline-none transition focus:border-gold/70 focus:bg-white focus:ring-2 focus:ring-gold/15 ${RESIN_CALC_INPUT_CLASS}`}
         />
         {suffix ? (
-          <span className="shrink-0 text-sm font-medium text-gold tabular-nums">
+          <span className={`shrink-0 ${RESIN_CALC_INPUT_SUFFIX_CLASS}`}>
             {suffix}
           </span>
         ) : null}
@@ -258,7 +266,7 @@ export function ResinCalculator() {
                 )}
               >
                 <IconPourVolume className="mx-auto" />
-                <p className="mt-1 text-center text-sm font-medium leading-snug text-fg">
+                <p className={`mt-1 text-center font-sans text-sm font-semibold leading-snug text-fg sm:text-base`}>
                   Сколько смолы нужно для заливки?
                 </p>
               </button>
@@ -271,7 +279,7 @@ export function ResinCalculator() {
                 )}
               >
                 <IconPartsMix className="mx-auto" />
-                <p className="mt-1 text-center text-sm font-medium leading-snug text-fg">
+                <p className={`mt-1 text-center font-sans text-sm font-semibold leading-snug text-fg sm:text-base`}>
                   Сколько компонента A и/или B нужно?
                 </p>
               </button>
@@ -301,7 +309,7 @@ export function ResinCalculator() {
                       ].join(" ")}
                     >
                       <Icon />
-                      <span className="text-center text-xs font-medium leading-snug text-fg sm:text-sm">
+                      <span className="text-center font-sans text-sm font-semibold leading-snug text-fg sm:text-base">
                         {opt.label}
                       </span>
                     </button>
@@ -314,7 +322,7 @@ export function ResinCalculator() {
               <h2 className="font-serif text-lg font-semibold text-green">
                 2. Выберите тип расчёта
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-fg/70">
+              <p className={`mt-2 ${RESIN_CALC_BODY_CLASS}`}>
                 Расчёт количества каждого компонента, если известен вес готовой
                 смеси или одного из компонентов.
               </p>
@@ -338,7 +346,7 @@ export function ResinCalculator() {
                       )}
                     >
                       <SubIcon className="shrink-0 scale-90 sm:scale-100" />
-                      <span className="text-sm font-medium leading-snug text-fg">
+                      <span className="font-sans text-sm font-semibold leading-snug text-fg sm:text-base">
                         {label}
                       </span>
                     </button>
@@ -356,11 +364,11 @@ export function ResinCalculator() {
               <h2 className="font-serif text-lg font-semibold text-green">
                 Введите размеры
               </h2>
-              <p className="mt-2 text-sm text-fg/70">
+              <p className={`mt-2 ${RESIN_CALC_BODY_CLASS}`}>
                 Примечание: длина и ширина в{" "}
-                <strong className="font-semibold text-green-deep">см</strong>,
+                <strong className="font-bold tabular-nums text-green-deep">см</strong>,
                 толщина в{" "}
-                <strong className="font-semibold text-gold">мм</strong>.
+                <strong className="font-bold tabular-nums text-gold">мм</strong>.
               </p>
 
               {pourType === "irregular" ? (
@@ -374,7 +382,7 @@ export function ResinCalculator() {
                       onChange={setWaterG}
                     />
                   </div>
-                  <div className="mt-4 rounded-xl border border-green/15 bg-sage-muted/40 px-4 py-3 text-sm leading-relaxed text-fg/80">
+                  <div className={`mt-4 rounded-xl border border-green/15 bg-sage-muted/40 px-4 py-3 ${RESIN_CALC_BODY_CLASS}`}>
                     Поставьте форму на весы, обнулите показания, залейте воду до
                     нужного уровня заливки и введите получившийся вес — он в граммах
                     близок к объёму в мл и см³.
@@ -416,7 +424,7 @@ export function ResinCalculator() {
                     onChange={setThicknessMm}
                   />
                   {isCoat ? (
-                    <div className="rounded-xl border border-gold/35 bg-gradient-to-r from-gold/10 to-sage-muted/35 px-4 py-3 text-sm leading-relaxed text-green-deep/95">
+                    <div className={`rounded-xl border border-gold/35 bg-gradient-to-r from-gold/10 to-sage-muted/35 px-4 py-3 ${RESIN_CALC_BODY_CLASS} text-green-deep/95`}>
                       Минимальная рекомендуемая толщина покрытия смолой: 1,5–2
                       мм.
                     </div>
@@ -430,9 +438,10 @@ export function ResinCalculator() {
             <h2 className="font-serif text-lg font-semibold text-green">
               Введите пропорции смолы
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-fg/70">
+            <p className={`mt-2 ${RESIN_CALC_BODY_CLASS}`}>
               Обычно указаны на этикетке смолы или на сайте продавца. Например
-              A:B = 100:60.{" "}
+              A:B ={" "}
+              <span className="font-bold tabular-nums text-green-deep">100:60</span>.{" "}
               <a
                 href="#faq-proportsii-smoly"
                 className="font-medium text-green underline-offset-2 hover:underline"
@@ -457,7 +466,7 @@ export function ResinCalculator() {
               />
             </div>
             {ratioInvalid ? (
-              <p className="mt-3 text-sm text-red-700/90">
+              <p className="mt-3 font-sans text-sm font-semibold text-red-700/90 sm:text-base">
                 Укажите положительные числа для обеих частей пропорции.
               </p>
             ) : null}
@@ -504,32 +513,40 @@ export function ResinCalculator() {
             <h2 className="font-serif text-lg font-semibold text-green">
               Результат
             </h2>
-            <p className="mt-1 text-xs text-fg/55">
+            <p className={`mt-1 ${RESIN_CALC_BODY_CLASS} text-fg/65`}>
               Ориентировочно, плотность смеси в расчётах:{" "}
-              {RESIN_DENSITY_G_PER_CM3} г/см³.
+              <span className="font-bold tabular-nums text-green-deep">
+                {RESIN_DENSITY_G_PER_CM3} г/см³
+              </span>.
             </p>
             <div className="mt-4 space-y-3">
-              <div className="flex items-center justify-between gap-4 rounded-2xl border border-gold/25 bg-gradient-to-r from-gold/12 via-sage-muted/45 to-cream/60 px-4 py-3.5">
-                <span className="font-serif text-sm font-semibold text-green">
+              <div
+                className="flex items-center justify-between gap-4 rounded-2xl border border-gold/50 bg-gradient-to-r from-gold/22 via-gold/12 to-cream/70 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] sm:px-5 sm:py-4"
+              >
+                <span className="font-sans text-sm font-bold text-gold sm:text-base">
                   Всего:
                 </span>
-                <span className="font-serif text-lg font-semibold text-green-deep tabular-nums">
+                <span className={`${RESIN_CALC_RESULT_TOTAL_CLASS} text-green-deep`}>
                   {formatGrams(displayTotal)}
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-4 rounded-2xl border border-green/12 bg-sage-muted/35 px-4 py-3.5">
-                <span className="text-sm font-medium text-green/90">
+              <div
+                className="flex items-center justify-between gap-4 rounded-2xl border border-green/35 bg-gradient-to-r from-green/14 via-sage-muted/75 to-white/90 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:px-5 sm:py-4"
+              >
+                <span className="font-sans text-sm font-bold text-green sm:text-base">
                   Компонент A:
                 </span>
-                <span className="text-lg font-semibold text-green-deep tabular-nums">
+                <span className={`${RESIN_CALC_RESULT_LINE_CLASS} text-green-deep`}>
                   {ratioInvalid ? "—" : formatGrams(displayA)}
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-4 rounded-2xl border border-green/10 bg-cream/70 px-4 py-3.5">
-                <span className="text-sm font-medium text-green/80">
+              <div
+                className="flex items-center justify-between gap-4 rounded-2xl border border-sage bg-gradient-to-r from-sage/55 via-sage-muted/90 to-cream/80 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] sm:px-5 sm:py-4"
+              >
+                <span className="font-sans text-sm font-bold text-green-deep/75 sm:text-base">
                   Компонент B:
                 </span>
-                <span className="text-lg font-semibold text-green tabular-nums">
+                <span className={`${RESIN_CALC_RESULT_LINE_CLASS} text-green`}>
                   {ratioInvalid ? "—" : formatGrams(displayB)}
                 </span>
               </div>
@@ -566,7 +583,7 @@ export function ResinCalculator() {
                   </span>
                 </span>
               </summary>
-              <div className="border-t border-green/10 pb-4 pt-3 text-sm leading-relaxed text-fg/75">
+              <div className={`border-t border-green/10 pb-4 pt-3 ${RESIN_CALC_BODY_CLASS}`}>
                 {item.answer}
               </div>
             </details>

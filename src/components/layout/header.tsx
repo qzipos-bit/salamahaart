@@ -1,40 +1,40 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
-import { SITE } from "@/lib/site";
+import { CartHeaderButton } from "@/components/cart/cart-header-button";
+import { MASTERS_CATALOG_PATH } from "@/lib/masters-products";
+import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 
 const nav = [
   { href: "/#about", label: "О мастере" },
-  { href: "/#categories", label: "Каталог" },
+  { href: CATALOG_SHOP_PATH, label: "Каталог изделий" },
   { href: "/#gallery", label: "Портфолио" },
   { href: "/blog", label: "Журнал" },
   { href: "/#courses", label: "Обучение" },
   { href: "/#contacts", label: "Контакты" },
 ];
 
-export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
+export const Header = memo(function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-green/10">
-      <div className="glass-panel">
-        <Container className="flex h-[72px] items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-green/10 bg-bg">
+      <Container className="flex h-[72px] items-center justify-between gap-4">
           <Link
             href="/"
             className="group flex items-center gap-3 leading-none"
             aria-label="Salamaha Fine Art — на главную"
           >
-            <Image
+            <img
               src="/logo-salamaha.webp"
               alt=""
-              width={56}
-              height={56}
+              width={48}
+              height={48}
               className="h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12"
-              priority
+              decoding="sync"
             />
             <span className="flex flex-col">
               <span className="font-script text-2xl text-green sm:text-[1.85rem]">
@@ -58,30 +58,17 @@ export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
-            {onOpenQuiz ? (
-              <button
-                type="button"
-                onClick={onOpenQuiz}
-                className="text-sm text-green/70 underline-offset-4 hover:text-green hover:underline"
+          <div className="flex items-center gap-2 md:gap-3">
+            <CartHeaderButton />
+            <div className="hidden md:block">
+              <Button
+                href={MASTERS_CATALOG_PATH}
+                className="!py-2.5 !text-sm"
               >
-                Подбор за 2 мин.
-              </button>
-            ) : null}
-            <Button href="/catalog" variant="secondary" className="!py-2.5 !text-sm">
-              Магазин
-            </Button>
-            <Button
-              href={SITE.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="!py-2.5 !text-sm"
-            >
-              Написать
-            </Button>
-          </div>
-
-          <button
+                Товары для мастеров
+              </Button>
+            </div>
+            <button
             type="button"
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-green/15 md:hidden"
             aria-expanded={open}
@@ -101,10 +88,11 @@ export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
               />
             </span>
           </button>
+          </div>
         </Container>
 
         {open ? (
-          <div className="border-t border-green/10 bg-bg/95 px-4 py-4 md:hidden">
+          <div className="border-t border-green/10 bg-bg px-4 py-4 md:hidden">
             <nav className="flex flex-col gap-3">
               {nav.map((item) => (
                 <Link
@@ -116,28 +104,14 @@ export function Header({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
                   {item.label}
                 </Link>
               ))}
-              {onOpenQuiz ? (
-                <button
-                  type="button"
-                  className="text-left text-base text-green/70"
-                  onClick={() => {
-                    setOpen(false);
-                    onOpenQuiz();
-                  }}
-                >
-                  Подбор декора за 2 минуты
-                </button>
-              ) : null}
-              <div className="mt-2 flex flex-col gap-2">
-                <Button href="/catalog" variant="secondary">
-                  Магазин
+              <div className="mt-2">
+                <Button href={MASTERS_CATALOG_PATH} className="w-full">
+                  Товары для мастеров
                 </Button>
-                <Button href={SITE.whatsapp}>WhatsApp</Button>
               </div>
             </nav>
           </div>
         ) : null}
-      </div>
     </header>
   );
-}
+});

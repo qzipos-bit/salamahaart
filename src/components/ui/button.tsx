@@ -12,6 +12,7 @@ type Props = {
   onClick?: () => void;
   target?: string;
   rel?: string;
+  disabled?: boolean;
 };
 
 const base =
@@ -34,8 +35,9 @@ export function Button({
   onClick,
   target,
   rel,
+  disabled,
 }: Props) {
-  const cls = `${base} ${variants[variant]} ${className}`;
+  const cls = `${base} ${variants[variant]} ${className}${disabled ? " pointer-events-none opacity-55" : ""}`;
 
   if (href) {
     return (
@@ -46,7 +48,7 @@ export function Button({
   }
 
   return (
-    <button type={type} className={cls} onClick={onClick}>
+    <button type={type} className={cls} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

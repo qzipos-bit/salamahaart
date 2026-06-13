@@ -266,7 +266,7 @@ export function SeoCatalogLandingView({
                   >
                     <summary className="cursor-pointer list-none py-4 outline-none marker:content-none [&::-webkit-details-marker]:hidden">
                       <span className="flex items-start justify-between gap-3">
-                        <h3 className="m-0 max-w-[calc(100%-2rem)] font-serif text-lg font-semibold leading-snug text-green">
+                        <h3 className="m-0 max-w-[calc(100%-2rem)] font-serif text-lg font-semibold leading-snug text-green-deep">
                           {item.question}
                         </h3>
                         <span
@@ -277,7 +277,7 @@ export function SeoCatalogLandingView({
                         </span>
                       </span>
                     </summary>
-                    <div className="border-t border-green/10 pb-4 pt-3 text-sm leading-relaxed text-fg/75 whitespace-pre-line">
+                    <div className="border-t border-green/10 pb-4 pt-3 text-base leading-relaxed text-fg/85 whitespace-pre-line">
                       {item.answer}
                     </div>
                   </details>

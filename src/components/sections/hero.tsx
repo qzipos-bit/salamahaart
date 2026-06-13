@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/container";
 import { HeroResinVisual } from "@/components/sections/hero-resin-visual";
 import { QuizLaunchButton } from "@/components/quiz/quiz-launch-button";
 import { Button } from "@/components/ui/button";
+import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 
 const perks = [
   { title: "Ручная работа", sub: "каждое изделие уникально" },
@@ -32,7 +33,7 @@ export function Hero() {
               особенных пространств.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button href="/catalog">Смотреть каталог</Button>
+              <Button href={CATALOG_SHOP_PATH}>Смотреть каталог</Button>
               <Button href="/#custom" variant="secondary">
                 Заказать индивидуально
               </Button>

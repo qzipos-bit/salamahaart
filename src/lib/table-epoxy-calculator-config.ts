@@ -5,7 +5,7 @@
 export const TABLE_EPOXY_CALC = {
   /** Минимальная сторона / диаметр, см */
   minDimensionCm: 20,
-  /** Минимальная итоговая сумма после всех множителей */
+  /** Минимальная сумма только для базового расчёта (площадь × тариф); доп. опции прибавляются сверху */
   minTotalRub: 15_000,
   /** Диапазон показа: от итога × min до итога × max */
   displayRange: { minMult: 0.95, maxMult: 1.1 },
@@ -14,14 +14,11 @@ export const TABLE_EPOXY_CALC = {
     woodResin: 165_000,
     resinOnly: 100_000,
   },
-  thicknessCm: [3, 3.5, 4, 5] as const,
-  /** Коэффициент толщины по значению в см */
-  thicknessCoeff: {
-    3: 1,
-    3.5: 1.1,
-    4: 1.2,
-    5: 1.35,
-  } as Record<3 | 3.5 | 4 | 5, number>,
+  /** Две группы толщины для расчёта и заявки */
+  thicknessTiers: {
+    upTo35: { label: "до 3,5 см", coeff: 1.1 },
+    from4: { label: "от 4 см", coeff: 1.275 },
+  },
   edgeCoeff: {
     smooth: 1,
     live: 1.08,
@@ -32,7 +29,7 @@ export const TABLE_EPOXY_CALC = {
     premium: 10_000,
   },
   decorFlowersRub: 7_000,
-  /** Базовая цена защитной плёнки для круга Ø40 см */
+  /** Базовая цена защитной плёнки для круга 40 см */
   filmBaseCircleDiameterCm: 40,
   filmBasePriceRub: 4_250,
   rushMult: 1.3,
@@ -71,6 +68,6 @@ export const TABLE_EPOXY_CALC = {
 
 export type TableEpoxyProductType = keyof typeof TABLE_EPOXY_CALC.productCards;
 export type TableEpoxyShape = "circle" | "rectangle";
-export type TableEpoxyThicknessCm = (typeof TABLE_EPOXY_CALC.thicknessCm)[number];
+export type TableEpoxyThicknessTier = keyof typeof TABLE_EPOXY_CALC.thicknessTiers;
 export type TableEpoxyEdge = keyof typeof TABLE_EPOXY_CALC.edgeCoeff;
 export type TableEpoxyLegs = keyof typeof TABLE_EPOXY_CALC.legsRub;
