@@ -58,19 +58,21 @@ export function mastersCatalogHref(params: {
   priceMin?: number;
   priceMax?: number;
   sort?: CatalogPriceSort | "";
-  extent: { min: number; max: number };
+  extent?: { min: number; max: number };
 }): string {
   const sp = new URLSearchParams();
   if (params.cat) sp.set("cat", params.cat);
   if (params.woodDia) sp.set("dia", String(params.woodDia));
   if (params.sort) sp.set("sort", params.sort);
-  const { extent } = params;
-  const lo = params.priceMin ?? extent.min;
-  const hi = params.priceMax ?? extent.max;
-  const priceTouched = lo > extent.min || hi < extent.max;
-  if (priceTouched) {
-    sp.set("priceMin", String(Math.round(lo)));
-    sp.set("priceMax", String(Math.round(hi)));
+  if (params.extent) {
+    const { extent } = params;
+    const lo = params.priceMin ?? extent.min;
+    const hi = params.priceMax ?? extent.max;
+    const priceTouched = lo > extent.min || hi < extent.max;
+    if (priceTouched) {
+      sp.set("priceMin", String(Math.round(lo)));
+      sp.set("priceMax", String(Math.round(hi)));
+    }
   }
   const q = sp.toString();
   return q ? `${MASTERS_CATALOG_PATH}?${q}` : MASTERS_CATALOG_PATH;

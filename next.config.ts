@@ -28,6 +28,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600],
+    imageSizes: [128, 192, 256, 384, 512, 640],
     remotePatterns: [
       {
         protocol: "https",

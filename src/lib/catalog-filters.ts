@@ -4,6 +4,7 @@ import type {
 } from "@/components/shop/product-card";
 import type { CatalogPriceSort } from "@/lib/catalog-sort";
 import { parseCatalogSortParam } from "@/lib/catalog-sort";
+import { CATALOG_URL_SYNC_EVENT } from "@/lib/catalog-return-url";
 
 export const CATALOG_CATEGORY_LABELS: Record<ProductCatalogCategory, string> = {
   stoly: "Столы",
@@ -89,6 +90,7 @@ export function syncCatalogShopUrl(
   const current = `${window.location.pathname}${window.location.search}`;
   if (current === href) return;
   window.history.replaceState(null, "", href);
+  window.dispatchEvent(new Event(CATALOG_URL_SYNC_EVENT));
 }
 
 /** Читает фильтры из query string (клиент, без server searchParams). */

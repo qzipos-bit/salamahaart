@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
@@ -12,7 +14,11 @@ import {
 } from "@/lib/masters-sliding-borts";
 import { formatWoodBlankVariantPrice } from "@/lib/masters-wood-blank-products";
 import { isWoodBlankCustomSlug } from "@/lib/masters-wood-blank-products";
-import { appendCatalogReturn } from "@/lib/catalog-return-url";
+import { appendCatalogReturn, readBrowserCatalogPageUrl } from "@/lib/catalog-return-url";
+import {
+  catalogScrollKindFromHrefPrefix,
+  rememberCatalogScrollBeforeProduct,
+} from "@/lib/catalog-scroll-leave";
 import { PRODUCT_CARD_TITLE_CLASS, PRODUCT_CARD_PRICE_CLASS } from "@/lib/product-typography";
 
 /** Совпадает с параметром `?cat=` на главной и в каталоге */
@@ -104,6 +110,17 @@ export const ProductCard = memo(function ProductCard({
     : product.priceToRub;
   const isWoodCustom = isWoodBlankCustomSlug(product.slug);
 
+  const scrollCatalog = catalogScrollKindFromHrefPrefix(hrefPrefix);
+  const rememberScroll = () => {
+    if (!scrollCatalog) return;
+    const liveUrl = readBrowserCatalogPageUrl();
+    const returnUrl =
+      liveUrl.startsWith(hrefPrefix) ? liveUrl : returnTo;
+    if (returnUrl) {
+      rememberCatalogScrollBeforeProduct(scrollCatalog, returnUrl);
+    }
+  };
+
   const imageAspectClass = compactMobile
     ? "aspect-[3/4] sm:aspect-[4/5]"
     : "aspect-[4/5]";
@@ -136,9 +153,13 @@ export const ProductCard = memo(function ProductCard({
 
   return (
     <article className={articleClass}>
-      <Link href={productHref} className="relative block overflow-hidden bg-sage-muted/25">
+      <Link
+        href={productHref}
+        onClick={rememberScroll}
+        className="relative block overflow-hidden bg-sage-muted/25"
+      >
         {stableLayout ? (
-          <img
+          <Image
             src={product.image}
             alt={
               isPlaceholder
@@ -147,13 +168,13 @@ export const ProductCard = memo(function ProductCard({
             }
             width={400}
             height={500}
+            unoptimized={isPlaceholder}
             className={
               imageContained
                 ? `${imageAspectClass} w-full object-contain object-center bg-sage-muted/35 ${imagePadClass}`
                 : `${imageAspectClass} w-full object-cover`
             }
-            loading="lazy"
-            decoding="async"
+            sizes={imageSizes}
           />
         ) : (
           <span className={`relative block ${imageAspectClass}`}>
@@ -182,7 +203,7 @@ export const ProductCard = memo(function ProductCard({
         ) : null}
       </Link>
       <div className={`flex flex-1 flex-col border-t border-green/10 ${contentPadClass}`}>
-        <Link href={productHref}>
+        <Link href={productHref} onClick={rememberScroll}>
           <TitleTag className={`${titleClass}${stableLayout ? "" : " transition group-hover:text-green-deep"}`}>
             {product.title}
           </TitleTag>
@@ -194,6 +215,7 @@ export const ProductCard = memo(function ProductCard({
           {isWoodCustom ? (
             <Button
               href={productHref}
+              onClick={rememberScroll}
               variant="secondary"
               className={`w-full ${actionBtnClass}`}
             >
@@ -210,6 +232,7 @@ export const ProductCard = memo(function ProductCard({
               priceRub={cartPriceRub}
               priceRubMax={cartPriceRubMax}
               className={actionBtnClass}
+              compact={compactMobile}
             />
           )}
         </div>

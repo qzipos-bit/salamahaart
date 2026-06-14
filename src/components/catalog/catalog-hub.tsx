@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/layout/container";
 import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import { ALL_PRODUCTS } from "@/lib/products";
@@ -31,15 +32,14 @@ export function CatalogHub() {
           prefetch={false}
           className={cardClass}
         >
-          <div className="overflow-hidden bg-sage-muted/40">
-            <img
+          <div className="relative overflow-hidden bg-sage-muted/40">
+            <Image
               src={landingPreviewImage(landing)}
               alt={landing.footerLabel}
               width={640}
               height={480}
               className="aspect-[4/3] w-full object-cover"
-              loading="eager"
-              decoding="sync"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col border-t border-green/10 px-5 py-4">

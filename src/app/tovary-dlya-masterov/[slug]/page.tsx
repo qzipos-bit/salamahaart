@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
 import { MastersProductGallery } from "@/components/shop/masters-product-gallery";
 import { MastersProductPurchase } from "@/components/shop/masters-product-purchase";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
+import { CatalogBackLink } from "@/components/shop/catalog-back-link";
 import { WoodBlankCustomPurchase } from "@/components/shop/wood-blank-custom-purchase";
 import { WoodBlankPurchase } from "@/components/shop/wood-blank-purchase";
 import {
@@ -30,10 +32,8 @@ export default async function MastersProductPage({ params, searchParams }: Props
   const product = MASTERS_PRODUCTS.find((p) => p.slug === slug);
   if (!product) notFound();
 
-  const backHref = resolveMastersCatalogReturn(
-    from,
-    MASTERS_PRODUCTS.map((p) => p.slug),
-  );
+  const productSlugs = MASTERS_PRODUCTS.map((p) => p.slug);
+  const backHref = resolveMastersCatalogReturn(from, productSlugs);
   const productPath = appendCatalogReturn(
     `${MASTERS_CATALOG_PATH}/${product.slug}`,
     backHref !== MASTERS_CATALOG_PATH ? backHref : undefined,
@@ -52,12 +52,16 @@ export default async function MastersProductPage({ params, searchParams }: Props
     <LandingShell>
       <section className="py-12 lg:py-16">
         <Container>
-          <Link
-            href={backHref}
-            className="text-sm font-medium text-green/70 hover:text-green hover:underline"
-          >
-            ← Товары для мастеров
-          </Link>
+          <Suspense fallback={null}>
+            <CatalogBackLink
+              catalog="masters"
+              fallback={backHref}
+              productSlugs={productSlugs}
+              className="text-sm font-medium text-green/70 hover:text-green hover:underline"
+            >
+              ← Товары для мастеров
+            </CatalogBackLink>
+          </Suspense>
           <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
             <MastersProductGallery
               images={galleryImages}
@@ -87,6 +91,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
                   backHref={backHref}
                   productPath={productPath}
                   description={product.description ?? ""}
+                  productSlugs={productSlugs}
                 />
               ) : woodBlankKind ? (
                 <WoodBlankPurchase
@@ -96,6 +101,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
                   backHref={backHref}
                   productPath={productPath}
                   description={product.description ?? ""}
+                  productSlugs={productSlugs}
                 />
               ) : hasVariants ? (
                 <div className="mt-6">
@@ -106,6 +112,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
                     defaultVariantId={product.defaultVariantId}
                     backHref={backHref}
                     productPath={productPath}
+                    productSlugs={productSlugs}
                     variantLegend={
                       product.slug === FULL_CIRCLE_WITH_BOTTOM_SLUG ||
                       product.slug === ROUND_RIM_SLUG
@@ -129,6 +136,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
                       backHref={backHref}
                       catalog="masters"
                       productPath={productPath}
+                      productSlugs={productSlugs}
                     />
                   </div>
                 </>

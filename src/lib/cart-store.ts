@@ -133,3 +133,34 @@ export function cartAddItem(item: {
     cartSetItems([...prev, normalized]);
   }
 }
+
+export function cartRemoveItem(id: string): void {
+  const prev = cartGetItemsSnapshot();
+  if (!prev.some((p) => p.id === id)) return;
+  cartSetItems(prev.filter((p) => p.id !== id));
+}
+
+export function cartDecrementItem(id: string): void {
+  const prev = cartGetItemsSnapshot();
+  const item = prev.find((p) => p.id === id);
+  if (!item) return;
+  if (item.quantity <= 1) {
+    cartSetItems(prev.filter((p) => p.id !== id));
+  } else {
+    cartSetItems(
+      prev.map((p) =>
+        p.id === id ? { ...p, quantity: p.quantity - 1 } : p,
+      ),
+    );
+  }
+}
+
+export function cartGetItemQuantity(
+  catalog: CartCatalog,
+  slug: string,
+  variantId?: string,
+): number {
+  const id = cartItemId(catalog, slug, variantId);
+  const item = cartGetItemsSnapshot().find((p) => p.id === id);
+  return item?.quantity ?? 0;
+}

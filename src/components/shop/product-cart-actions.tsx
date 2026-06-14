@@ -1,7 +1,7 @@
 "use client";
 
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
-import { Button } from "@/components/ui/button";
+import { CatalogBackButton } from "@/components/shop/catalog-back-button";
 
 type Props = {
   slug: string;
@@ -10,6 +10,7 @@ type Props = {
   backHref: string;
   catalog: "catalog" | "masters";
   productPath: string;
+  productSlugs: readonly string[];
   priceRub?: number;
   priceRubMax?: number;
 };
@@ -21,6 +22,7 @@ export function ProductCartActions({
   backHref,
   catalog,
   productPath,
+  productSlugs,
   priceRub,
   priceRubMax,
 }: Props) {
@@ -38,9 +40,11 @@ export function ProductCartActions({
         fullWidth={false}
         className="sm:min-w-[10rem]"
       />
-      <Button href={backHref} variant="secondary">
-        Назад в каталог
-      </Button>
+      <CatalogBackButton
+        catalog={catalog}
+        fallback={backHref}
+        productSlugs={productSlugs}
+      />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import type { MasterProduct } from "@/lib/masters-products";
 import { formatDiameterCm, formatDiameterListCm } from "@/lib/masters-format";
 import {
   formatMastersRub,
-  SLIDING_BORT_LINEAR_METER_RUB,
   SLIDING_BORT_WITHOUT_BOTTOM_VARIANTS,
 } from "@/lib/masters-sliding-borts";
 
@@ -39,7 +38,7 @@ function buildRoundRimVariants(): MasterProduct["variants"] {
 
 export const ROUND_RIM_SLUG = "obod-krugovoj" as const;
 
-const ROUND_RIM_IMAGES = ["/masters-forms/obod-krugovoj-01.png"] as const;
+const ROUND_RIM_IMAGES = ["/masters-forms/obod-krugovoj-01.webp"] as const;
 
 function roundRimProduct(): MasterProduct {
   const variants = buildRoundRimVariants() ?? [];
@@ -80,7 +79,7 @@ function buildFullCircleWithBottomVariants(): MasterProduct["variants"] {
 
 export const FULL_CIRCLE_WITH_BOTTOM_SLUG = "forma-krugi-s-domom" as const;
 
-const FULL_CIRCLE_IMAGES = ["/masters-forms/krugi-s-domom-01.png"] as const;
+const FULL_CIRCLE_IMAGES = ["/masters-forms/krugi-s-domom-01.webp"] as const;
 
 function fullCircleWithBottomProduct(): MasterProduct {
   const variants = buildFullCircleWithBottomVariants() ?? [];
@@ -129,12 +128,13 @@ const FULL_CIRCLE_PRICES: Array<{ d: number; price: number }> = [
 ];
 
 const SLIDING_FORM_WITH_BASE_IMAGE =
-  "/masters-forms/razdvizhnaya-opalubka-osnova-01.png" as const;
+  "/masters-forms/razdvizhnaya-opalubka-osnova-01.webp" as const;
 
-const SLIDING_FORM_WITH_BASE_PRICE = 15_490;
+const SLIDING_FORM_60X60_WITH_BASE_PRICE = 10_490;
+const SLIDING_FORM_100X100_WITH_BASE_PRICE = 15_490;
 
 const RIM_SET_WITH_BASE_IMAGE =
-  "/masters-forms/nabor-obodov-osnova-01.png" as const;
+  "/masters-forms/nabor-obodov-osnova-01.webp" as const;
 
 export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   // Готовое решение → набор круги с дном
@@ -156,8 +156,8 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   {
     slug: "razdvizhnaya-opalubka-osnova-60x60",
     title: "Раздвижная опалубка + основа, 60×60 см",
-    price: formatRub(SLIDING_FORM_WITH_BASE_PRICE),
-    priceFromRub: SLIDING_FORM_WITH_BASE_PRICE,
+    price: formatRub(SLIDING_FORM_60X60_WITH_BASE_PRICE),
+    priceFromRub: SLIDING_FORM_60X60_WITH_BASE_PRICE,
     category: "formy-razdvizhnaya",
     image: SLIDING_FORM_WITH_BASE_IMAGE,
     images: [SLIDING_FORM_WITH_BASE_IMAGE],
@@ -169,8 +169,8 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   {
     slug: "forma-pryam-s-domom-100x100",
     title: "Раздвижная опалубка + основа, 100×100 см",
-    price: formatRub(SLIDING_FORM_WITH_BASE_PRICE),
-    priceFromRub: SLIDING_FORM_WITH_BASE_PRICE,
+    price: formatRub(SLIDING_FORM_100X100_WITH_BASE_PRICE),
+    priceFromRub: SLIDING_FORM_100X100_WITH_BASE_PRICE,
     category: "formy-razdvizhnaya",
     image: SLIDING_FORM_WITH_BASE_IMAGE,
     images: [SLIDING_FORM_WITH_BASE_IMAGE],
@@ -190,17 +190,16 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
       ...SLIDING_BORT_WITHOUT_BOTTOM_VARIANTS.map((v) => v.priceRub),
     ),
     category: "formy-razdvizhnaya",
-    image: "/masters-forms/razdvizhnye-borta-100x100-01.png",
+    image: "/masters-forms/razdvizhnye-borta-100x100-01.webp",
     images: [
-      "/masters-forms/razdvizhnye-borta-100x100-01.png",
-      "/masters-forms/razdvizhnye-borta-100x100-02.png",
+      "/masters-forms/razdvizhnye-borta-100x100-01.webp",
+      "/masters-forms/razdvizhnye-borta-100x100-02.webp",
     ],
     variants: [...SLIDING_BORT_WITHOUT_BOTTOM_VARIANTS],
     defaultVariantId: "100x100",
     description: formDescription([
       "Раздвижные борта без дна — регулируемый размер внутреннего поля.",
       "Подходит для больших и сложных изделий.",
-      `Цена: ${formatMastersRub(SLIDING_BORT_LINEAR_METER_RUB)} за погонный метр (периметр).`,
       "Выберите размер на карточке товара — цена пересчитается автоматически.",
       "Высота борта: 7 см.",
       "Все плашки совместимы с друг другом — можно комбинировать и расширять набор.",
@@ -215,7 +214,11 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
     price: formatRub(540),
     priceFromRub: 540,
     category: "formy-pazl",
-    image: PLACEHOLDER,
+    image: "/masters-forms/pazl-zamok-10-01.webp",
+    images: [
+      "/masters-forms/pazl-zamok-10-01.webp",
+      "/masters-forms/pazl-zamok-10-02.webp",
+    ],
     description: formDescription(["Пазловая форма — замок.", "Длина: 10 см."]),
   },
   {
@@ -224,7 +227,11 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
     price: formatRub(1_830),
     priceFromRub: 1_830,
     category: "formy-pazl",
-    image: PLACEHOLDER,
+    image: "/masters-forms/pazl-zamok-65-01.webp",
+    images: [
+      "/masters-forms/pazl-zamok-65-01.webp",
+      "/masters-forms/pazl-zamok-65-02.webp",
+    ],
     description: formDescription(["Пазловая форма — замок.", "Длина: 65 см."]),
   },
   {
@@ -233,7 +240,11 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
     price: formatRub(900),
     priceFromRub: 900,
     category: "formy-pazl",
-    image: PLACEHOLDER,
+    image: "/masters-forms/pazl-dobornaya-plashka-30-01.webp",
+    images: [
+      "/masters-forms/pazl-dobornaya-plashka-30-01.webp",
+      "/masters-forms/pazl-dobornaya-plashka-30-02.webp",
+    ],
     description: formDescription([
       "Пазловая форма — доборная плашка.",
       "Длина: 30 см.",
@@ -245,7 +256,11 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
     price: formatRub(1_850),
     priceFromRub: 1_850,
     category: "formy-pazl",
-    image: PLACEHOLDER,
+    image: "/masters-forms/pazl-dobornaya-plashka-60-01.webp",
+    images: [
+      "/masters-forms/pazl-dobornaya-plashka-60-01.webp",
+      "/masters-forms/pazl-dobornaya-plashka-60-02.webp",
+    ],
     description: formDescription([
       "Пазловая форма — доборная плашка.",
       "Длина: 60 см.",

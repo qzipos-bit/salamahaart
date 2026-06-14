@@ -13,6 +13,7 @@ type Props = {
   target?: string;
   rel?: string;
   disabled?: boolean;
+  scroll?: boolean;
 };
 
 const base =
@@ -36,12 +37,20 @@ export function Button({
   target,
   rel,
   disabled,
+  scroll,
 }: Props) {
   const cls = `${base} ${variants[variant]} ${className}${disabled ? " pointer-events-none opacity-55" : ""}`;
 
   if (href) {
     return (
-      <Link href={href} className={cls} target={target} rel={rel}>
+      <Link
+        href={href}
+        className={cls}
+        target={target}
+        rel={rel}
+        onClick={onClick}
+        scroll={scroll}
+      >
         {children}
       </Link>
     );

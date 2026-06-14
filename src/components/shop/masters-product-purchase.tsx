@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
-import { Button } from "@/components/ui/button";
+import { CatalogBackButton } from "@/components/shop/catalog-back-button";
 import type { MasterProductVariant } from "@/lib/masters-products";
 import {
   formatMastersRub,
@@ -20,6 +20,7 @@ type Props = {
   defaultVariantId?: string;
   backHref: string;
   productPath: string;
+  productSlugs: readonly string[];
   /** Подпись блока выбора варианта на странице товара. */
   variantLegend?: string;
 };
@@ -31,6 +32,7 @@ export function MastersProductPurchase({
   defaultVariantId,
   backHref,
   productPath,
+  productSlugs,
   variantLegend = "Размер внутреннего поля",
 }: Props) {
   const initialId =
@@ -95,9 +97,11 @@ export function MastersProductPurchase({
           fullWidth={false}
           className="sm:min-w-[10rem]"
         />
-        <Button href={backHref} variant="secondary">
-          Назад в каталог
-        </Button>
+        <CatalogBackButton
+          catalog="masters"
+          fallback={backHref}
+          productSlugs={productSlugs}
+        />
       </div>
     </div>
   );

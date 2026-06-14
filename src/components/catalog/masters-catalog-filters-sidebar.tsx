@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback } from "react";
 import type { MasterProductCategory } from "@/lib/masters-products";
 import {
   MASTERS_CATALOG_PATH,
@@ -17,18 +17,16 @@ import type { CatalogPriceSort } from "@/lib/catalog-sort";
 import {
   MASTERS_FORMS_GROUP_CAT,
   MASTERS_CATEGORY_LABELS,
-  formatRubShort,
-  getMastersPriceStep,
   mastersCatalogHref,
   type MastersCatalogCatParam,
 } from "@/lib/masters-catalog-filters";
 import { appendCatalogReturn } from "@/lib/catalog-return-url";
+import { rememberCatalogScrollBeforeProduct } from "@/lib/catalog-scroll-leave";
+import { useCatalogPageUrl } from "@/hooks/use-catalog-page-url";
 import {
   FILTER_NAV_ROW_IDLE_CLASS,
   FILTER_NAV_SUB_ACTIVE_CLASS,
   FILTER_NAV_SUB_IDLE_CLASS,
-  FILTER_PRICE_VALUE_CLASS,
-  FILTER_RANGE_LABEL_CLASS,
   FILTER_SIDEBAR_PANEL_CLASS,
   FILTER_SIDEBAR_RESET_CLASS,
   FILTER_SIDEBAR_SECTION_CLASS,
@@ -40,12 +38,9 @@ import {
 } from "@/components/catalog/masters-catalog-category-icons";
 
 type Props = {
-  extent: { min: number; max: number };
   activeCat: MasterProductCategory | "";
   activeFormsGroup: boolean;
   activeSort: CatalogPriceSort | "";
-  initialMin: number;
-  initialMax: number;
 };
 
 function navRowClass(active: boolean) {
@@ -69,12 +64,14 @@ function FilterNavLink({
   active,
   iconId,
   sub = false,
+  onNavigate,
   children,
 }: {
   href: string;
   active: boolean;
   iconId: MastersCatalogIconId;
   sub?: boolean;
+  onNavigate?: () => void;
   children: ReactNode;
 }) {
   const rowClass = sub ? navSubRowClass(active) : navRowClass(active);
@@ -83,7 +80,11 @@ function FilterNavLink({
     : "h-5 w-5 shrink-0 text-green";
 
   return (
-    <Link href={href} className={`${rowClass} flex items-center gap-2.5`}>
+    <Link
+      href={href}
+      onClick={onNavigate}
+      className={`${rowClass} flex items-center gap-2.5`}
+    >
       <MastersCatalogCategoryIcon id={iconId} className={iconClass} />
       <span className="min-w-0 leading-snug">{children}</span>
     </Link>
@@ -91,20 +92,11 @@ function FilterNavLink({
 }
 
 export function MastersCatalogFiltersSidebar({
-  extent,
   activeCat,
   activeFormsGroup,
   activeSort,
-  initialMin,
-  initialMax,
 }: Props) {
-  const step = getMastersPriceStep(extent);
-  const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [minVal, setMinVal] = useState(initialMin);
-  const [maxVal, setMaxVal] = useState(initialMax);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isFormCategory = MASTERS_FORM_CATEGORIES.includes(
     activeCat as MasterProductCategory,
@@ -120,94 +112,25 @@ export function MastersCatalogFiltersSidebar({
 
   const isWoodMenuActive = isWoodCategoryActive || Boolean(activeWoodSlug);
 
-  const catalogReturnTo = useMemo(() => {
-    if (pathname !== MASTERS_CATALOG_PATH) return MASTERS_CATALOG_PATH;
-    const q = searchParams.toString();
-    return q ? `${MASTERS_CATALOG_PATH}?${q}` : MASTERS_CATALOG_PATH;
-  }, [pathname, searchParams]);
-
-  useEffect(() => {
-    setMinVal(initialMin);
-    setMaxVal(initialMax);
-  }, [initialMin, initialMax]);
+  const catalogReturnTo = useCatalogPageUrl(
+    MASTERS_CATALOG_PATH,
+    MASTERS_CATALOG_PATH,
+  );
 
   const catalogHref = useCallback(
     (cat?: MastersCatalogCatParam) =>
       mastersCatalogHref({
         cat,
         sort: activeSort || undefined,
-        priceMin: minVal,
-        priceMax: maxVal,
-        extent,
       }),
-    [extent, minVal, maxVal, activeSort],
+    [activeSort],
   );
 
-  const activeFilterCat: MastersCatalogCatParam | undefined = activeFormsGroup
-    ? MASTERS_FORMS_GROUP_CAT
-    : activeCat || undefined;
-
-  const flushReplace = useCallback(
-    (lo: number, hi: number) => {
-      const href = mastersCatalogHref({
-        cat: activeFilterCat,
-        sort: activeSort || undefined,
-        priceMin: lo,
-        priceMax: hi,
-        extent,
-      });
-      router.replace(href, { scroll: false });
-    },
-    [activeFilterCat, activeSort, extent, router],
-  );
-
-  const scheduleReplace = useCallback(
-    (lo: number, hi: number) => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
-        debounceRef.current = null;
-        flushReplace(lo, hi);
-      }, 380);
-    },
-    [flushReplace],
-  );
-
-  useEffect(
-    () => () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    },
-    [],
-  );
-
-  const onMinChange = (v: number) => {
-    let next = Math.max(extent.min, Math.min(v, maxVal - step));
-    let hi = maxVal;
-    if (hi < next + step) {
-      hi = Math.min(extent.max, next + step);
-      setMaxVal(hi);
-    }
-    setMinVal(next);
-    scheduleReplace(next, hi);
+  const rememberCatalogScroll = () => {
+    rememberCatalogScrollBeforeProduct("masters", catalogReturnTo);
   };
 
-  const onMaxChange = (v: number) => {
-    let next = Math.min(extent.max, Math.max(v, minVal + step));
-    let lo = minVal;
-    if (lo > next - step) {
-      lo = Math.max(extent.min, next - step);
-      setMinVal(lo);
-    }
-    setMaxVal(next);
-    scheduleReplace(lo, next);
-  };
-
-  const minSliderMax = Math.max(extent.min, maxVal - step);
-  const maxSliderMin = Math.min(extent.max, minVal + step);
-
-  const priceTouched = minVal > extent.min || maxVal < extent.max;
-  const hasFilters = Boolean(
-    activeCat || activeFormsGroup || activeSort || priceTouched,
-  );
+  const hasFilters = Boolean(activeCat || activeFormsGroup || activeSort);
 
   const formsButtonLabel =
     isFormCategory && !activeFormsGroup
@@ -278,6 +201,7 @@ export function MastersCatalogFiltersSidebar({
                     active={activeWoodSlug === item.slug}
                     iconId={item.slug as MastersCatalogIconId}
                     sub
+                    onNavigate={rememberCatalogScroll}
                   >
                     {item.title}
                   </FilterNavLink>
@@ -334,51 +258,6 @@ export function MastersCatalogFiltersSidebar({
           </li>
         </ul>
       </nav>
-
-      <div
-        className="mt-8 border-t border-green/15 pt-6"
-        aria-labelledby="masters-filter-price-heading"
-      >
-        <p id="masters-filter-price-heading" className={FILTER_SIDEBAR_SECTION_CLASS}>
-          Цена
-        </p>
-        <p className={`mt-2 ${FILTER_PRICE_VALUE_CLASS}`}>
-          {formatRubShort(minVal)} — {formatRubShort(maxVal)}
-        </p>
-
-        <div className="mt-4 space-y-4">
-          <div>
-            <label htmlFor="masters-price-min" className={FILTER_RANGE_LABEL_CLASS}>
-              От
-            </label>
-            <input
-              id="masters-price-min"
-              type="range"
-              min={extent.min}
-              max={minSliderMax}
-              step={step}
-              value={minVal}
-              onChange={(e) => onMinChange(Number(e.target.value))}
-              className="mt-1 w-full cursor-pointer accent-[var(--green)]"
-            />
-          </div>
-          <div>
-            <label htmlFor="masters-price-max" className={FILTER_RANGE_LABEL_CLASS}>
-              До
-            </label>
-            <input
-              id="masters-price-max"
-              type="range"
-              min={maxSliderMin}
-              max={extent.max}
-              step={step}
-              value={maxVal}
-              onChange={(e) => onMaxChange(Number(e.target.value))}
-              className="mt-1 w-full cursor-pointer accent-[var(--green)]"
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

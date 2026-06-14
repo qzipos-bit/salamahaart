@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { WoodBlankDescriptionCollapsible } from "@/components/shop/wood-blank-description-collapsible";
-import { Button } from "@/components/ui/button";
+import { CatalogBackButton } from "@/components/shop/catalog-back-button";
 import { PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
   backHref: string;
   productPath: string;
   description: string;
+  productSlugs: readonly string[];
 };
 
 export function WoodBlankCustomPurchase({
@@ -20,6 +21,7 @@ export function WoodBlankCustomPurchase({
   backHref,
   productPath,
   description,
+  productSlugs,
 }: Props) {
   const [sizeSpec, setSizeSpec] = useState("");
   const trimmed = sizeSpec.trim();
@@ -79,9 +81,11 @@ export function WoodBlankCustomPurchase({
           className="sm:min-w-[10rem] disabled:opacity-55"
           disabled={!trimmed}
         />
-        <Button href={backHref} variant="secondary">
-          Назад в каталог
-        </Button>
+        <CatalogBackButton
+          catalog="masters"
+          fallback={backHref}
+          productSlugs={productSlugs}
+        />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { WoodBlankDescriptionCollapsible } from "@/components/shop/wood-blank-description-collapsible";
-import { Button } from "@/components/ui/button";
+import { CatalogBackButton } from "@/components/shop/catalog-back-button";
 import { formatDiameterCm } from "@/lib/masters-format";
 import {
   MASTERS_WOOD_BLANK_DIAMETERS_CM,
@@ -31,6 +31,7 @@ type Props = {
   backHref: string;
   productPath: string;
   description: string;
+  productSlugs: readonly string[];
 };
 
 const THICKNESS_OPTIONS: {
@@ -52,6 +53,7 @@ export function WoodBlankPurchase({
   backHref,
   productPath,
   description,
+  productSlugs,
 }: Props) {
   const edgeKey = edgeKeyForKind(kind);
   const isRectangular = kind === "rectangular";
@@ -293,9 +295,11 @@ export function WoodBlankPurchase({
           fullWidth={false}
           className="sm:min-w-[10rem]"
         />
-        <Button href={backHref} variant="secondary">
-          Назад в каталог
-        </Button>
+        <CatalogBackButton
+          catalog="masters"
+          fallback={backHref}
+          productSlugs={productSlugs}
+        />
       </div>
     </div>
   );

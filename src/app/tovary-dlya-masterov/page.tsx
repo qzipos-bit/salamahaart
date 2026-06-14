@@ -3,18 +3,16 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
-import { ProductCard } from "@/components/shop/product-card";
-import { CatalogSortNav } from "@/components/catalog/catalog-sort-select";
+import { CatalogSortSelect } from "@/components/catalog/catalog-sort-select";
 import { MastersCatalogFiltersSidebar } from "@/components/catalog/masters-catalog-filters-sidebar";
+import { MastersCatalogProductGrid } from "@/components/catalog/masters-catalog-product-grid";
 import { PuzzleFormConstructor } from "@/components/catalog/puzzle-form-constructor";
+import { CatalogReturnSync } from "@/components/shop/catalog-return-sync";
 import {
   MASTERS_CATEGORY_LABELS,
   MASTERS_FORMS_GROUP_CAT,
   filterMastersProducts,
-  formatRubShort,
-  getMastersPriceExtent,
   parseMastersCatalogCat,
-  parseMastersPriceParams,
 } from "@/lib/masters-catalog-filters";
 import type { MasterProductCategory } from "@/lib/masters-products";
 import {
@@ -26,7 +24,6 @@ import {
   parseCatalogSortParam,
   sortProductsByPriceFromRub,
 } from "@/lib/catalog-sort";
-import { PRICE_FILTER_SUMMARY_CLASS } from "@/lib/product-typography";
 import { buildMastersCatalogReturnUrl } from "@/lib/catalog-return-url";
 
 export const metadata: Metadata = {
@@ -38,8 +35,6 @@ export const metadata: Metadata = {
 type Props = {
   searchParams: Promise<{
     cat?: string | string[];
-    priceMin?: string;
-    priceMax?: string;
     sort?: string | string[];
   }>;
 };
@@ -53,43 +48,37 @@ function resolveCatParam(
 }
 
 export default async function MastersCatalogPage({ searchParams }: Props) {
-  const { cat: catRaw, priceMin: priceMinRaw, priceMax: priceMaxRaw, sort: sortRaw } =
-    await searchParams;
-  const extent = getMastersPriceExtent(MASTERS_PRODUCTS);
+  const { cat: catRaw, sort: sortRaw } = await searchParams;
   const sort = parseCatalogSortParam(sortRaw);
   const catalogCat = parseMastersCatalogCat(catRaw);
   const isFormsGroup = catalogCat === MASTERS_FORMS_GROUP_CAT;
   const cat = resolveCatParam(catRaw);
   const filterCat = catalogCat || undefined;
-  const priceRange = parseMastersPriceParams(
-    priceMinRaw,
-    priceMaxRaw,
-    extent,
-  );
 
   const filtered = sortProductsByPriceFromRub(
-    filterMastersProducts(
-      MASTERS_PRODUCTS,
-      filterCat,
-      priceRange,
-    ),
+    filterMastersProducts(MASTERS_PRODUCTS, filterCat, {
+      active: false,
+      min: 0,
+      max: Number.MAX_SAFE_INTEGER,
+    }),
     sort,
   );
 
   const catalogReturnTo = buildMastersCatalogReturnUrl({
     cat: catRaw,
-    priceMin: priceMinRaw,
-    priceMax: priceMaxRaw,
     sort: sortRaw,
   });
 
   const total = MASTERS_PRODUCTS.length;
-  const hasFilters = Boolean(catalogCat || priceRange.active || sort);
+  const hasFilters = Boolean(catalogCat || sort);
 
   return (
     <LandingShell>
       <section className="py-12 lg:py-16">
         <Container>
+          <Suspense fallback={null}>
+            <CatalogReturnSync catalog="masters" />
+          </Suspense>
           <Link
             href="/"
             className="text-sm font-medium text-green/70 hover:text-green hover:underline"
@@ -128,17 +117,6 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
                     : MASTERS_CATEGORY_LABELS[catalogCat as MasterProductCategory]}
                 </>
               ) : null}
-              {priceRange.active ? (
-                <>
-                  {" "}
-                  ·{" "}
-                  <span className="text-fg/55">цена:</span>{" "}
-                  <span className={PRICE_FILTER_SUMMARY_CLASS}>
-                    {formatRubShort(priceRange.min)} —{" "}
-                    {formatRubShort(priceRange.max)}
-                  </span>
-                </>
-              ) : null}
               {sort ? (
                 <>
                   {" "}
@@ -156,12 +134,9 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
             >
               <div className="lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
                 <MastersCatalogFiltersSidebar
-                  extent={extent}
                   activeCat={cat}
                   activeFormsGroup={isFormsGroup}
                   activeSort={sort}
-                  initialMin={priceRange.min}
-                  initialMax={priceRange.max}
                 />
               </div>
             </aside>
@@ -183,21 +158,15 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
                 <>
                   <Suspense fallback={null}>
                     <div className="mt-4">
-                      <CatalogSortNav basePath={MASTERS_CATALOG_PATH} />
+                      <CatalogSortSelect basePath={MASTERS_CATALOG_PATH} />
                     </div>
                   </Suspense>
-                  <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
-                    {filtered.map((p) => (
-                      <ProductCard
-                        key={p.slug}
-                        product={p}
-                        titleLevel={2}
-                        hrefPrefix={MASTERS_CATALOG_PATH}
-                        returnTo={catalogReturnTo}
-                        compactMobile
-                      />
-                    ))}
-                  </div>
+                  <Suspense fallback={null}>
+                    <MastersCatalogProductGrid
+                      products={filtered}
+                      catalogReturnToFallback={catalogReturnTo}
+                    />
+                  </Suspense>
                 </>
               )}
             </div>

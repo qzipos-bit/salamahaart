@@ -303,37 +303,37 @@ function woodBlankDescription(lines: string[]): string {
 }
 
 const SLAB_CALM_IMAGES = [
-  "/masters-wood-blanks/sleb-spokojnyj-01.png",
-  "/masters-wood-blanks/sleb-spokojnyj-02.png",
+  "/masters-wood-blanks/sleb-spokojnyj-01.webp",
+  "/masters-wood-blanks/sleb-spokojnyj-02.webp",
 ] as const;
 
 const SLAB_LIVE_IMAGES = [
-  "/masters-wood-blanks/sleb-kapovyj-01.png",
-  "/masters-wood-blanks/sleb-kapovyj-02.png",
+  "/masters-wood-blanks/sleb-kapovyj-01.webp",
+  "/masters-wood-blanks/sleb-kapovyj-02.webp",
 ] as const;
 
 const SPIL_CALM_IMAGES = [
-  "/masters-wood-blanks/spil-spokojnyj-01.png",
-  "/masters-wood-blanks/spil-spokojnyj-02.png",
-  "/masters-wood-blanks/spil-spokojnyj-03.png",
+  "/masters-wood-blanks/spil-spokojnyj-01.webp",
+  "/masters-wood-blanks/spil-spokojnyj-02.webp",
+  "/masters-wood-blanks/spil-spokojnyj-03.webp",
 ] as const;
 
 const SPIL_LIVE_IMAGES = [
-  "/masters-wood-blanks/spil-kapovyj-01.png",
-  "/masters-wood-blanks/spil-kapovyj-02.png",
+  "/masters-wood-blanks/spil-kapovyj-01.webp",
+  "/masters-wood-blanks/spil-kapovyj-02.webp",
 ] as const;
 
 const RECTANGULAR_IMAGES = [
-  "/masters-wood-blanks/pryamougolnye-01.png",
-  "/masters-wood-blanks/pryamougolnye-02.png",
-  "/masters-wood-blanks/pryamougolnye-03.png",
+  "/masters-wood-blanks/pryamougolnye-01.webp",
+  "/masters-wood-blanks/pryamougolnye-02.webp",
+  "/masters-wood-blanks/pryamougolnye-03.webp",
 ] as const;
 
 const CUSTOM_IMAGES = [
-  "/masters-wood-blanks/individualnyj-01.png",
-  "/masters-wood-blanks/individualnyj-02.png",
-  "/masters-wood-blanks/individualnyj-03.png",
-  "/masters-wood-blanks/individualnyj-04.png",
+  "/masters-wood-blanks/individualnyj-01.webp",
+  "/masters-wood-blanks/individualnyj-02.webp",
+  "/masters-wood-blanks/individualnyj-03.webp",
+  "/masters-wood-blanks/individualnyj-04.webp",
 ] as const;
 
 function buildConsolidatedWoodProduct(

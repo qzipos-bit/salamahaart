@@ -13,8 +13,8 @@ export const MASTERS_INSTRUMENT_PRODUCTS: MasterProduct[] = [
     price: formatRub(2_500),
     priceFromRub: 2_500,
     category: "instrumenty",
-    image: "/masters-instruments/shablon-frezer-nisha-chasy-01.png",
-    images: ["/masters-instruments/shablon-frezer-nisha-chasy-01.png"],
+    image: "/masters-instruments/shablon-frezer-nisha-chasy-01.webp",
+    images: ["/masters-instruments/shablon-frezer-nisha-chasy-01.webp"],
     badge: "hit",
     description:
       "Шаблон для ручного фрезера для фрезеровки ниши под часовой механизм.",
@@ -25,8 +25,8 @@ export const MASTERS_INSTRUMENT_PRODUCTS: MasterProduct[] = [
     price: formatRub(8_500),
     priceFromRub: 8_500,
     category: "instrumenty",
-    image: "/masters-instruments/osnova-100x100-01.png",
-    images: ["/masters-instruments/osnova-100x100-01.png"],
+    image: "/masters-instruments/osnova-100x100-01.webp",
+    images: ["/masters-instruments/osnova-100x100-01.webp"],
     description: "Основа для заливки, размер 100×100 см.",
   },
   {
@@ -35,8 +35,8 @@ export const MASTERS_INSTRUMENT_PRODUCTS: MasterProduct[] = [
     price: formatRub(5_700),
     priceFromRub: 5_700,
     category: "instrumenty",
-    image: "/masters-instruments/osnova-universalnaya-01.png",
-    images: ["/masters-instruments/osnova-universalnaya-01.png"],
+    image: "/masters-instruments/osnova-universalnaya-01.webp",
+    images: ["/masters-instruments/osnova-universalnaya-01.webp"],
     badge: "new",
     description:
       `Универсальная основа.\n1 сторона — фрезеровка паза под обод 60 см.\n2 сторона — ровная.`,

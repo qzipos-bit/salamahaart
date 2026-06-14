@@ -1,11 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
+import { CatalogBackLink } from "@/components/shop/catalog-back-link";
 import { ALL_PRODUCTS } from "@/lib/products";
+import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import {
   appendCatalogReturn,
   resolveCatalogReturn,
@@ -27,19 +29,23 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const backHref = resolveCatalogReturn(from, productSlugs);
   const productPath = appendCatalogReturn(
     `/catalog/${product.slug}`,
-    backHref !== "/catalog" ? backHref : undefined,
+    backHref !== CATALOG_SHOP_PATH ? backHref : undefined,
   );
 
   return (
     <LandingShell>
       <section className="py-12 lg:py-16">
         <Container>
-          <Link
-            href={backHref}
-            className="text-sm font-medium text-green/70 hover:text-green hover:underline"
-          >
-            ← Каталог
-          </Link>
+          <Suspense fallback={null}>
+            <CatalogBackLink
+              catalog="catalog"
+              fallback={backHref}
+              productSlugs={productSlugs}
+              className="text-sm font-medium text-green/70 hover:text-green hover:underline"
+            >
+              ← Каталог
+            </CatalogBackLink>
+          </Suspense>
           <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] border border-green/10 shadow-[var(--shadow-sm)]">
               <Image
@@ -77,6 +83,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   backHref={backHref}
                   catalog="catalog"
                   productPath={productPath}
+                  productSlugs={productSlugs}
                 />
               </div>
             </div>
