@@ -6,25 +6,45 @@ import { MastersProductGallery } from "@/components/shop/masters-product-gallery
 import { MastersProductPurchase } from "@/components/shop/masters-product-purchase";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { WoodBlankCustomPurchase } from "@/components/shop/wood-blank-custom-purchase";
+import { WoodBlankPurchase } from "@/components/shop/wood-blank-purchase";
 import {
   MASTERS_CATALOG_PATH,
   MASTERS_PRODUCTS,
 } from "@/lib/masters-products";
-import { WOOD_BLANK_CUSTOM_SLUG } from "@/lib/masters-wood-blank-products";
+import {
+  getWoodBlankProductKind,
+  WOOD_BLANK_CUSTOM_SLUG,
+} from "@/lib/masters-wood-blank-products";
+import { FULL_CIRCLE_WITH_BOTTOM_SLUG, ROUND_RIM_SLUG } from "@/lib/masters-form-products";
+import { resolveMastersCatalogReturn, appendCatalogReturn } from "@/lib/catalog-return-url";
 import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string | string[] }>;
+};
 
-export default async function MastersProductPage({ params }: Props) {
+export default async function MastersProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { from } = await searchParams;
   const product = MASTERS_PRODUCTS.find((p) => p.slug === slug);
   if (!product) notFound();
+
+  const backHref = resolveMastersCatalogReturn(
+    from,
+    MASTERS_PRODUCTS.map((p) => p.slug),
+  );
+  const productPath = appendCatalogReturn(
+    `${MASTERS_CATALOG_PATH}/${product.slug}`,
+    backHref !== MASTERS_CATALOG_PATH ? backHref : undefined,
+  );
 
   const galleryImages =
     product.images && product.images.length > 0
       ? product.images
       : [product.image];
 
+  const woodBlankKind = getWoodBlankProductKind(product.slug);
   const hasVariants = product.variants && product.variants.length > 0;
   const isWoodCustom = product.slug === WOOD_BLANK_CUSTOM_SLUG;
 
@@ -33,7 +53,7 @@ export default async function MastersProductPage({ params }: Props) {
       <section className="py-12 lg:py-16">
         <Container>
           <Link
-            href={MASTERS_CATALOG_PATH}
+            href={backHref}
             className="text-sm font-medium text-green/70 hover:text-green hover:underline"
           >
             ← Товары для мастеров
@@ -49,11 +69,11 @@ export default async function MastersProductPage({ params }: Props) {
                 {product.title}
               </h1>
 
-              {product.description ? (
+              {product.description && !woodBlankKind && !isWoodCustom ? (
                 <div className="mt-6 space-y-2 text-base leading-relaxed text-fg/85 whitespace-pre-line">
                   {product.description}
                 </div>
-              ) : !hasVariants ? (
+              ) : !hasVariants && !woodBlankKind && !isWoodCustom ? (
                 <p className="mt-6 text-base leading-relaxed text-fg/85">
                   Материалы и инструменты для мастеров. Напишите в WhatsApp —
                   уточним наличие, объём и условия доставки.
@@ -64,8 +84,18 @@ export default async function MastersProductPage({ params }: Props) {
                 <WoodBlankCustomPurchase
                   slug={product.slug}
                   title={product.title}
-                  backHref={MASTERS_CATALOG_PATH}
-                  productPath={`${MASTERS_CATALOG_PATH}/${product.slug}`}
+                  backHref={backHref}
+                  productPath={productPath}
+                  description={product.description ?? ""}
+                />
+              ) : woodBlankKind ? (
+                <WoodBlankPurchase
+                  slug={product.slug}
+                  title={product.title}
+                  kind={woodBlankKind}
+                  backHref={backHref}
+                  productPath={productPath}
+                  description={product.description ?? ""}
                 />
               ) : hasVariants ? (
                 <div className="mt-6">
@@ -74,8 +104,14 @@ export default async function MastersProductPage({ params }: Props) {
                     title={product.title}
                     variants={product.variants!}
                     defaultVariantId={product.defaultVariantId}
-                    backHref={MASTERS_CATALOG_PATH}
-                    productPath={`${MASTERS_CATALOG_PATH}/${product.slug}`}
+                    backHref={backHref}
+                    productPath={productPath}
+                    variantLegend={
+                      product.slug === FULL_CIRCLE_WITH_BOTTOM_SLUG ||
+                      product.slug === ROUND_RIM_SLUG
+                        ? "Диаметр"
+                        : undefined
+                    }
                   />
                 </div>
               ) : (
@@ -90,9 +126,9 @@ export default async function MastersProductPage({ params }: Props) {
                       price={product.price}
                       priceRub={product.priceFromRub}
                       priceRubMax={product.priceToRub}
-                      backHref={MASTERS_CATALOG_PATH}
+                      backHref={backHref}
                       catalog="masters"
-                      productPath={`${MASTERS_CATALOG_PATH}/${product.slug}`}
+                      productPath={productPath}
                     />
                   </div>
                 </>

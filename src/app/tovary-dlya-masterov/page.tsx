@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
 import { ProductCard } from "@/components/shop/product-card";
-import { CatalogSortSelect } from "@/components/catalog/catalog-sort-select";
+import { CatalogSortNav } from "@/components/catalog/catalog-sort-select";
 import { MastersCatalogFiltersSidebar } from "@/components/catalog/masters-catalog-filters-sidebar";
 import { PuzzleFormConstructor } from "@/components/catalog/puzzle-form-constructor";
 import {
@@ -12,11 +12,9 @@ import {
   MASTERS_FORMS_GROUP_CAT,
   filterMastersProducts,
   formatRubShort,
-  formatWoodDiaFilterLabel,
   getMastersPriceExtent,
   parseMastersCatalogCat,
   parseMastersPriceParams,
-  parseWoodDiaParam,
 } from "@/lib/masters-catalog-filters";
 import type { MasterProductCategory } from "@/lib/masters-products";
 import {
@@ -29,6 +27,7 @@ import {
   sortProductsByPriceFromRub,
 } from "@/lib/catalog-sort";
 import { PRICE_FILTER_SUMMARY_CLASS } from "@/lib/product-typography";
+import { buildMastersCatalogReturnUrl } from "@/lib/catalog-return-url";
 
 export const metadata: Metadata = {
   title: "Товары для мастеров — силикагель, формы, заготовки",
@@ -39,7 +38,6 @@ export const metadata: Metadata = {
 type Props = {
   searchParams: Promise<{
     cat?: string | string[];
-    dia?: string | string[];
     priceMin?: string;
     priceMax?: string;
     sort?: string | string[];
@@ -55,7 +53,7 @@ function resolveCatParam(
 }
 
 export default async function MastersCatalogPage({ searchParams }: Props) {
-  const { cat: catRaw, dia: diaRaw, priceMin: priceMinRaw, priceMax: priceMaxRaw, sort: sortRaw } =
+  const { cat: catRaw, priceMin: priceMinRaw, priceMax: priceMaxRaw, sort: sortRaw } =
     await searchParams;
   const extent = getMastersPriceExtent(MASTERS_PRODUCTS);
   const sort = parseCatalogSortParam(sortRaw);
@@ -63,7 +61,6 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
   const isFormsGroup = catalogCat === MASTERS_FORMS_GROUP_CAT;
   const cat = resolveCatParam(catRaw);
   const filterCat = catalogCat || undefined;
-  const woodDia = parseWoodDiaParam(diaRaw);
   const priceRange = parseMastersPriceParams(
     priceMinRaw,
     priceMaxRaw,
@@ -75,13 +72,19 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
       MASTERS_PRODUCTS,
       filterCat,
       priceRange,
-      woodDia,
     ),
     sort,
   );
 
+  const catalogReturnTo = buildMastersCatalogReturnUrl({
+    cat: catRaw,
+    priceMin: priceMinRaw,
+    priceMax: priceMaxRaw,
+    sort: sortRaw,
+  });
+
   const total = MASTERS_PRODUCTS.length;
-  const hasFilters = Boolean(catalogCat || woodDia || priceRange.active || sort);
+  const hasFilters = Boolean(catalogCat || priceRange.active || sort);
 
   return (
     <LandingShell>
@@ -123,7 +126,6 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
                   {isFormsGroup
                     ? "Формы для смолы"
                     : MASTERS_CATEGORY_LABELS[catalogCat as MasterProductCategory]}
-                  {woodDia ? ` · ${formatWoodDiaFilterLabel(woodDia)}` : ""}
                 </>
               ) : null}
               {priceRange.active ? (
@@ -157,7 +159,6 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
                   extent={extent}
                   activeCat={cat}
                   activeFormsGroup={isFormsGroup}
-                  activeWoodDia={woodDia ?? ""}
                   activeSort={sort}
                   initialMin={priceRange.min}
                   initialMax={priceRange.max}
@@ -182,16 +183,18 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
                 <>
                   <Suspense fallback={null}>
                     <div className="mt-4">
-                      <CatalogSortSelect basePath={MASTERS_CATALOG_PATH} />
+                      <CatalogSortNav basePath={MASTERS_CATALOG_PATH} />
                     </div>
                   </Suspense>
-                  <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
                     {filtered.map((p) => (
                       <ProductCard
                         key={p.slug}
                         product={p}
                         titleLevel={2}
                         hrefPrefix={MASTERS_CATALOG_PATH}
+                        returnTo={catalogReturnTo}
+                        compactMobile
                       />
                     ))}
                   </div>

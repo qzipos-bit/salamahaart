@@ -11,6 +11,8 @@ let items: CartItem[] = [];
 let open = false;
 let hydrated = false;
 
+const EMPTY_CART_ITEMS: CartItem[] = [];
+
 function readStoredItems(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
@@ -61,7 +63,7 @@ export function cartGetItemsSnapshot(): CartItem[] {
 }
 
 export function cartGetItemsServerSnapshot(): CartItem[] {
-  return [];
+  return EMPTY_CART_ITEMS;
 }
 
 export function cartGetOpenSnapshot(): boolean {

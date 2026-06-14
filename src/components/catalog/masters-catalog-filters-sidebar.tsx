@@ -1,15 +1,18 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MasterProductCategory } from "@/lib/masters-products";
 import {
   MASTERS_CATALOG_PATH,
   MASTERS_FORM_CATEGORIES,
 } from "@/lib/masters-products";
-import { MASTERS_WOOD_BLANK_DIAMETERS_CM, WOOD_BLANK_CUSTOM_DIA_PARAM } from "@/lib/masters-wood-blank-products";
-import type { WoodBlankDiaFilter } from "@/lib/masters-wood-blank-products";
+import {
+  isWoodBlankProductSlug,
+  MASTERS_WOOD_BLANK_NAV_ITEMS,
+} from "@/lib/masters-wood-blank-products";
 import type { CatalogPriceSort } from "@/lib/catalog-sort";
 import {
   MASTERS_FORMS_GROUP_CAT,
@@ -19,7 +22,7 @@ import {
   mastersCatalogHref,
   type MastersCatalogCatParam,
 } from "@/lib/masters-catalog-filters";
-import { formatDiameterCm } from "@/lib/masters-format";
+import { appendCatalogReturn } from "@/lib/catalog-return-url";
 import {
   FILTER_NAV_ROW_IDLE_CLASS,
   FILTER_NAV_SUB_ACTIVE_CLASS,
@@ -31,12 +34,15 @@ import {
   FILTER_SIDEBAR_SECTION_CLASS,
   FILTER_SIDEBAR_TITLE_CLASS,
 } from "@/lib/product-typography";
+import {
+  MastersCatalogCategoryIcon,
+  type MastersCatalogIconId,
+} from "@/components/catalog/masters-catalog-category-icons";
 
 type Props = {
   extent: { min: number; max: number };
   activeCat: MasterProductCategory | "";
   activeFormsGroup: boolean;
-  activeWoodDia: WoodBlankDiaFilter | "";
   activeSort: CatalogPriceSort | "";
   initialMin: number;
   initialMax: number;
@@ -44,7 +50,7 @@ type Props = {
 
 function navRowClass(active: boolean) {
   return [
-    "block rounded-lg border px-3 py-2.5 transition",
+    "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition",
     active
       ? "border-green bg-green font-sans text-sm font-bold text-cream shadow-sm"
       : FILTER_NAV_ROW_IDLE_CLASS,
@@ -53,22 +59,34 @@ function navRowClass(active: boolean) {
 
 function navSubRowClass(active: boolean) {
   return [
-    "block rounded-md px-3 py-2 transition",
+    "flex items-center gap-2.5 rounded-md px-3 py-2 transition",
     active ? FILTER_NAV_SUB_ACTIVE_CLASS : FILTER_NAV_SUB_IDLE_CLASS,
   ].join(" ");
 }
 
-function ChevronDown({ className }: { className?: string }) {
+function FilterNavLink({
+  href,
+  active,
+  iconId,
+  sub = false,
+  children,
+}: {
+  href: string;
+  active: boolean;
+  iconId: MastersCatalogIconId;
+  sub?: boolean;
+  children: ReactNode;
+}) {
+  const rowClass = sub ? navSubRowClass(active) : navRowClass(active);
+  const iconClass = active
+    ? "h-5 w-5 shrink-0 text-cream"
+    : "h-5 w-5 shrink-0 text-green";
+
   return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      aria-hidden
-      className={className}
-    >
-      <path fill="currentColor" d="M2.5 4.5 6 8l3.5-3.5" />
-    </svg>
+    <Link href={href} className={`${rowClass} flex items-center gap-2.5`}>
+      <MastersCatalogCategoryIcon id={iconId} className={iconClass} />
+      <span className="min-w-0 leading-snug">{children}</span>
+    </Link>
   );
 }
 
@@ -76,64 +94,37 @@ export function MastersCatalogFiltersSidebar({
   extent,
   activeCat,
   activeFormsGroup,
-  activeWoodDia,
   activeSort,
   initialMin,
   initialMax,
 }: Props) {
   const step = getMastersPriceStep(extent);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [minVal, setMinVal] = useState(initialMin);
   const [maxVal, setMaxVal] = useState(initialMax);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isFormCategory = MASTERS_FORM_CATEGORIES.includes(
     activeCat as MasterProductCategory,
   );
   const isWoodCategoryActive = activeCat === "derev-zagotovki";
-  const isWoodMenuActive = isWoodCategoryActive || Boolean(activeWoodDia);
   const isFormsMenuActive = activeFormsGroup || isFormCategory;
 
-  const [formsOpen, setFormsOpen] = useState(isFormsMenuActive);
-  const [woodOpen, setWoodOpen] = useState(isWoodMenuActive);
-  const formsMenuRef = useRef<HTMLLIElement>(null);
-  const woodMenuRef = useRef<HTMLLIElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeWoodSlug =
+    pathname?.startsWith(`${MASTERS_CATALOG_PATH}/`) &&
+    isWoodBlankProductSlug(pathname.slice(MASTERS_CATALOG_PATH.length + 1))
+      ? pathname.slice(MASTERS_CATALOG_PATH.length + 1)
+      : "";
 
-  useEffect(() => {
-    if (isFormsMenuActive) setFormsOpen(true);
-  }, [isFormsMenuActive]);
+  const isWoodMenuActive = isWoodCategoryActive || Boolean(activeWoodSlug);
 
-  useEffect(() => {
-    if (isWoodMenuActive) setWoodOpen(true);
-  }, [isWoodMenuActive]);
-
-  useEffect(() => {
-    if (!formsOpen) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (
-        formsMenuRef.current &&
-        !formsMenuRef.current.contains(e.target as Node)
-      ) {
-        setFormsOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [formsOpen]);
-
-  useEffect(() => {
-    if (!woodOpen) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (
-        woodMenuRef.current &&
-        !woodMenuRef.current.contains(e.target as Node)
-      ) {
-        setWoodOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [woodOpen]);
+  const catalogReturnTo = useMemo(() => {
+    if (pathname !== MASTERS_CATALOG_PATH) return MASTERS_CATALOG_PATH;
+    const q = searchParams.toString();
+    return q ? `${MASTERS_CATALOG_PATH}?${q}` : MASTERS_CATALOG_PATH;
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     setMinVal(initialMin);
@@ -141,10 +132,9 @@ export function MastersCatalogFiltersSidebar({
   }, [initialMin, initialMax]);
 
   const catalogHref = useCallback(
-    (cat?: MastersCatalogCatParam, woodDia?: WoodBlankDiaFilter) =>
+    (cat?: MastersCatalogCatParam) =>
       mastersCatalogHref({
         cat,
-        woodDia,
         sort: activeSort || undefined,
         priceMin: minVal,
         priceMax: maxVal,
@@ -161,7 +151,6 @@ export function MastersCatalogFiltersSidebar({
     (lo: number, hi: number) => {
       const href = mastersCatalogHref({
         cat: activeFilterCat,
-        woodDia: activeWoodDia || undefined,
         sort: activeSort || undefined,
         priceMin: lo,
         priceMax: hi,
@@ -169,7 +158,7 @@ export function MastersCatalogFiltersSidebar({
       });
       router.replace(href, { scroll: false });
     },
-    [activeFilterCat, activeWoodDia, activeSort, extent, router],
+    [activeFilterCat, activeSort, extent, router],
   );
 
   const scheduleReplace = useCallback(
@@ -217,19 +206,13 @@ export function MastersCatalogFiltersSidebar({
 
   const priceTouched = minVal > extent.min || maxVal < extent.max;
   const hasFilters = Boolean(
-    activeCat || activeFormsGroup || activeWoodDia || activeSort || priceTouched,
+    activeCat || activeFormsGroup || activeSort || priceTouched,
   );
 
   const formsButtonLabel =
     isFormCategory && !activeFormsGroup
       ? MASTERS_CATEGORY_LABELS[activeCat as MasterProductCategory]
       : "Формы для смолы";
-
-  const woodButtonLabel = activeWoodDia
-    ? activeWoodDia === WOOD_BLANK_CUSTOM_DIA_PARAM
-      ? "Индивидуальный размер"
-      : formatDiameterCm(activeWoodDia)
-    : "Деревянные заготовки";
 
   return (
     <div className={FILTER_SIDEBAR_PANEL_CLASS}>
@@ -248,158 +231,106 @@ export function MastersCatalogFiltersSidebar({
         </p>
         <ul className="mt-3 flex flex-col gap-1.5">
           <li>
-            <Link href={catalogHref()} className={navRowClass(!activeCat)}>
+            <FilterNavLink href={catalogHref()} active={!activeCat} iconId="all">
               Все категории
-            </Link>
+            </FilterNavLink>
           </li>
           <li>
-            <Link
+            <FilterNavLink
               href={catalogHref("silikagel")}
-              className={navRowClass(activeCat === "silikagel")}
+              active={activeCat === "silikagel"}
+              iconId="silikagel"
             >
               Силикагель
-            </Link>
-          </li>
-          <li ref={woodMenuRef} className="relative">
-            <div
-              className={`${navRowClass(isWoodMenuActive)} flex items-stretch gap-0.5 pr-1.5`}
-            >
-              <Link
-                href={catalogHref("derev-zagotovki")}
-                id="masters-wood-trigger"
-                className="flex min-w-0 flex-1 items-center py-0 pl-0 text-left"
-                onClick={() => setWoodOpen(true)}
-              >
-                <span className="truncate">{woodButtonLabel}</span>
-              </Link>
-              <button
-                type="button"
-                aria-expanded={woodOpen}
-                aria-controls="masters-wood-submenu"
-                aria-label={
-                  woodOpen
-                    ? "Скрыть фильтры заготовок"
-                    : "Показать фильтры заготовок"
-                }
-                className="flex shrink-0 items-center self-center rounded-md p-1.5 transition hover:bg-black/10"
-                onClick={() => setWoodOpen((open) => !open)}
-              >
-                <ChevronDown
-                  className={`shrink-0 transition-transform duration-200 ${
-                    woodOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-            </div>
-            {woodOpen ? (
-              <ul
-                id="masters-wood-submenu"
-                role="list"
-                aria-labelledby="masters-wood-trigger"
-                className="mt-1.5 flex flex-col gap-0.5 rounded-lg border border-green/15 bg-white p-1.5 shadow-[var(--shadow-sm)]"
-              >
-                <li>
-                  <Link
-                    href={catalogHref("derev-zagotovki")}
-                    className={navSubRowClass(
-                      isWoodCategoryActive && !activeWoodDia,
-                    )}
-                  >
-                    Все заготовки
-                  </Link>
-                </li>
-                {MASTERS_WOOD_BLANK_DIAMETERS_CM.map((dia) => (
-                  <li key={dia}>
-                    <Link
-                      href={catalogHref("derev-zagotovki", dia)}
-                      className={navSubRowClass(activeWoodDia === dia)}
-                    >
-                      {formatDiameterCm(dia)}
-                    </Link>
-                  </li>
-                ))}
-                <li>
-                  <Link
-                    href={catalogHref(
-                      "derev-zagotovki",
-                      WOOD_BLANK_CUSTOM_DIA_PARAM,
-                    )}
-                    className={navSubRowClass(
-                      activeWoodDia === WOOD_BLANK_CUSTOM_DIA_PARAM,
-                    )}
-                  >
-                    Индивидуальный размер
-                  </Link>
-                </li>
-              </ul>
-            ) : null}
-          </li>
-          <li ref={formsMenuRef} className="relative">
-            <div
-              className={`${navRowClass(isFormsMenuActive)} flex items-stretch gap-0.5 pr-1.5`}
-            >
-              <Link
-                href={catalogHref(MASTERS_FORMS_GROUP_CAT)}
-                id="masters-forms-trigger"
-                className="flex min-w-0 flex-1 items-center py-0 pl-0 text-left"
-                onClick={() => setFormsOpen(true)}
-              >
-                <span className="truncate">{formsButtonLabel}</span>
-              </Link>
-              <button
-                type="button"
-                aria-expanded={formsOpen}
-                aria-controls="masters-forms-submenu"
-                aria-label={
-                  formsOpen
-                    ? "Скрыть типы форм"
-                    : "Показать типы форм"
-                }
-                className="flex shrink-0 items-center self-center rounded-md p-1.5 transition hover:bg-black/10"
-                onClick={() => setFormsOpen((open) => !open)}
-              >
-                <ChevronDown
-                  className={`shrink-0 transition-transform duration-200 ${
-                    formsOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-            </div>
-            {formsOpen ? (
-              <ul
-                id="masters-forms-submenu"
-                role="list"
-                aria-labelledby="masters-forms-trigger"
-                className="mt-1.5 flex flex-col gap-0.5 rounded-lg border border-green/15 bg-white p-1.5 shadow-[var(--shadow-sm)]"
-              >
-                <li>
-                  <Link
-                    href={catalogHref(MASTERS_FORMS_GROUP_CAT)}
-                    className={navSubRowClass(activeFormsGroup)}
-                  >
-                    Все формы
-                  </Link>
-                </li>
-                {MASTERS_FORM_CATEGORIES.map((id) => (
-                  <li key={id}>
-                    <Link
-                      href={catalogHref(id)}
-                      className={navSubRowClass(activeCat === id)}
-                    >
-                      {MASTERS_CATEGORY_LABELS[id]}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+            </FilterNavLink>
           </li>
           <li>
-            <Link
+            <FilterNavLink
+              href={catalogHref("derev-zagotovki")}
+              active={
+                isWoodMenuActive && !activeWoodSlug && isWoodCategoryActive
+              }
+              iconId="derev-zagotovki"
+            >
+              Деревянные заготовки
+            </FilterNavLink>
+            <ul
+              className="mt-1.5 flex flex-col gap-0.5 pl-1"
+              aria-label="Деревянные заготовки"
+            >
+              <li>
+                <FilterNavLink
+                  href={catalogHref("derev-zagotovki")}
+                  active={isWoodCategoryActive && !activeWoodSlug}
+                  iconId="wood-all"
+                  sub
+                >
+                  Все заготовки
+                </FilterNavLink>
+              </li>
+              {MASTERS_WOOD_BLANK_NAV_ITEMS.map((item) => (
+                <li key={item.slug}>
+                  <FilterNavLink
+                    href={appendCatalogReturn(
+                      `${MASTERS_CATALOG_PATH}/${item.slug}`,
+                      catalogReturnTo,
+                    )}
+                    active={activeWoodSlug === item.slug}
+                    iconId={item.slug as MastersCatalogIconId}
+                    sub
+                  >
+                    {item.title}
+                  </FilterNavLink>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li>
+            <FilterNavLink
+              href={catalogHref(MASTERS_FORMS_GROUP_CAT)}
+              active={isFormsMenuActive && !isFormCategory}
+              iconId={
+                isFormCategory ? (activeCat as MastersCatalogIconId) : "formy"
+              }
+            >
+              {formsButtonLabel}
+            </FilterNavLink>
+            <ul
+              className="mt-1.5 flex flex-col gap-0.5 pl-1"
+              aria-label="Формы для смолы"
+            >
+              <li>
+                <FilterNavLink
+                  href={catalogHref(MASTERS_FORMS_GROUP_CAT)}
+                  active={activeFormsGroup}
+                  iconId="formy-all"
+                  sub
+                >
+                  Все формы
+                </FilterNavLink>
+              </li>
+              {MASTERS_FORM_CATEGORIES.map((id) => (
+                <li key={id}>
+                  <FilterNavLink
+                    href={catalogHref(id)}
+                    active={activeCat === id}
+                    iconId={id}
+                    sub
+                  >
+                    {MASTERS_CATEGORY_LABELS[id]}
+                  </FilterNavLink>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li>
+            <FilterNavLink
               href={catalogHref("instrumenty")}
-              className={navRowClass(activeCat === "instrumenty")}
+              active={activeCat === "instrumenty"}
+              iconId="instrumenty"
             >
               Полезные инструменты
-            </Link>
+            </FilterNavLink>
           </li>
         </ul>
       </nav>

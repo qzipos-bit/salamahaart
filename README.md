@@ -15,6 +15,7 @@ npm run dev
 
 1. Скопируйте `.env.example` в `.env.local`.
 2. Укажите `NEXT_PUBLIC_SITE_URL` (прод: без слэша в конце), `NEXT_PUBLIC_WHATSAPP_URL` и при необходимости правьте `src/lib/site.ts` (телефон, адрес).
+3. Для отправки заказов по почте задайте `SMTP_USER` и `SMTP_PASS` (пароль приложения Mail.ru) — см. [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Деплой
 

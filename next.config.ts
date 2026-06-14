@@ -1,8 +1,20 @@
 import type { NextConfig } from "next";
+import { WOOD_BLANK_LEGACY_SLUG_REDIRECTS } from "@/lib/wood-blank-legacy-slugs";
+import { FORM_LEGACY_SLUG_REDIRECTS } from "@/lib/form-legacy-slugs";
+
+const mastersLegacyRedirects = Object.entries({
+  ...WOOD_BLANK_LEGACY_SLUG_REDIRECTS,
+  ...FORM_LEGACY_SLUG_REDIRECTS,
+}).map(([slug, destination]) => ({
+  source: `/tovary-dlya-masterov/${slug}`,
+  destination: `/tovary-dlya-masterov/${destination}`,
+  permanent: true,
+}));
 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      ...mastersLegacyRedirects,
       {
         source: "/catalog/panello-sage",
         destination: "/catalog/fotaramka-30x40-a4",

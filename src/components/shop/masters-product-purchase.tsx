@@ -20,6 +20,8 @@ type Props = {
   defaultVariantId?: string;
   backHref: string;
   productPath: string;
+  /** Подпись блока выбора варианта на странице товара. */
+  variantLegend?: string;
 };
 
 export function MastersProductPurchase({
@@ -29,6 +31,7 @@ export function MastersProductPurchase({
   defaultVariantId,
   backHref,
   productPath,
+  variantLegend = "Размер внутреннего поля",
 }: Props) {
   const initialId =
     defaultVariantId && variants.some((v) => v.id === defaultVariantId)
@@ -53,7 +56,7 @@ export function MastersProductPurchase({
 
       <fieldset className="mt-6">
         <legend className="text-sm font-semibold text-green-deep">
-          Размер внутреннего поля
+          {variantLegend}
         </legend>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {variants.map((v) => {

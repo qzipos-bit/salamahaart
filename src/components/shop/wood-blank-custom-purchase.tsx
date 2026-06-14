@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { WoodBlankDescriptionCollapsible } from "@/components/shop/wood-blank-description-collapsible";
 import { Button } from "@/components/ui/button";
 import { PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
 
@@ -10,6 +11,7 @@ type Props = {
   title: string;
   backHref: string;
   productPath: string;
+  description: string;
 };
 
 export function WoodBlankCustomPurchase({
@@ -17,6 +19,7 @@ export function WoodBlankCustomPurchase({
   title,
   backHref,
   productPath,
+  description,
 }: Props) {
   const [sizeSpec, setSizeSpec] = useState("");
   const trimmed = sizeSpec.trim();
@@ -31,7 +34,12 @@ export function WoodBlankCustomPurchase({
       <p className={PRODUCT_PAGE_PRICE_CLASS}>
         по запросу
       </p>
-      <p className="mt-2 text-sm leading-relaxed text-fg/80">
+
+      <div className="mt-4">
+        <WoodBlankDescriptionCollapsible description={description} />
+      </div>
+
+      <p className="mt-4 text-sm leading-relaxed text-fg/80">
         Цена зависит от диаметра, толщины и типа края — рассчитаем после
         заявки.
       </p>

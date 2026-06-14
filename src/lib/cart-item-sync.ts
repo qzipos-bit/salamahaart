@@ -23,10 +23,20 @@ function mastersCartPrice(
     ? product.variants?.find((v) => v.id === variantId)
     : undefined;
   const priceRub = variant?.priceRub ?? product.priceFromRub;
-  const priceRubMax = variant ? undefined : product.priceToRub;
+  const variantMax = variant?.priceRubMax;
+  const priceRubMax =
+    variantMax != null && variantMax > priceRub
+      ? variantMax
+      : variant
+        ? undefined
+        : product.priceToRub;
 
   if (variant) {
-    return { priceRub, price: formatCartRub(priceRub) };
+    const price =
+      priceRubMax != null
+        ? `${new Intl.NumberFormat("ru-RU").format(priceRub)}–${new Intl.NumberFormat("ru-RU").format(priceRubMax)} ₽`
+        : formatCartRub(priceRub);
+    return { priceRub, priceRubMax, price };
   }
 
   if (
@@ -68,9 +78,7 @@ export function normalizeCartItem(item: CartItem): CartItem {
     const resolved = mastersCartPrice(next.slug, next.variantId);
     if (resolved) {
       const needsWoodRange =
-        next.slug.startsWith("derevo-d") &&
-        resolved.priceRubMax != null &&
-        next.priceRubMax == null;
+        resolved.priceRubMax != null && next.priceRubMax == null;
       const needsPriceFix =
         /уточняйте|whatsapp/i.test(next.price) ||
         next.priceRub == null ||

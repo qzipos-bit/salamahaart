@@ -11,7 +11,13 @@ export function StickyMobileCta() {
   const pathname = usePathname();
   const { open } = useCart();
 
-  if (open || HIDE_ON_PATHS.includes(pathname)) return null;
+  if (
+    open ||
+    HIDE_ON_PATHS.includes(pathname) ||
+    pathname.startsWith("/tovary-dlya-masterov")
+  ) {
+    return null;
+  }
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 p-4 md:hidden">

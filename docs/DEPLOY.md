@@ -12,9 +12,24 @@
 |------------|-------------|------------|
 | `NEXT_PUBLIC_SITE_URL` | **Да** для продакшена | Публичный URL **без** слэша в конце, например `https://salamaha.ru`. Нужен для `sitemap`, canonical, Open Graph и `metadataBase`. |
 | `NEXT_PUBLIC_WHATSAPP_URL` | Рекомендуется | Ссылка WhatsApp, например `https://wa.me/79384440033` |
+| `SMTP_USER` | **Да** для заказов | Почта Mail.ru для отправки (например `salamaha.2012@mail.ru`) |
+| `SMTP_PASS` | **Да** для заказов | Пароль **приложения** Mail.ru (не основной пароль аккаунта) |
+| `SMTP_HOST` | Опционально | По умолчанию `smtp.mail.ru` |
+| `SMTP_PORT` | Опционально | По умолчанию `465` |
+| `SMTP_FROM` | Опционально | Адрес «От кого»; по умолчанию совпадает с `SMTP_USER` |
+| `ORDER_NOTIFICATION_EMAIL` | Опционально | Куда приходят заказы; по умолчанию `salamaha.2012@mail.ru` |
 | `NEXT_PUBLIC_ORG_SAME_AS` | Опционально | Профили для JSON-LD, через запятую: `https://vk.com/...,https://t.me/...` |
 
 Остальное (телефон, адрес) пока в [`src/lib/site.ts`](../src/lib/site.ts).
+
+### Письма с заказами (SMTP Mail.ru)
+
+Без `SMTP_USER` и `SMTP_PASS` оформление заказа в корзине завершится с ошибкой.
+
+1. Скопируйте `.env.example` в `.env.local` (или используйте уже созданный `.env.local`).
+2. В [Mail.ru](https://mail.ru) → **Настройки** → **Безопасность** → **Пароли для внешних приложений** создайте пароль для «Почта».
+3. В `.env.local` задайте `SMTP_USER` (ваш ящик) и `SMTP_PASS` (пароль приложения).
+4. Перезапустите `npm run dev` (или задайте те же переменные в панели Vercel для Production).
 
 ---
 

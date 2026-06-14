@@ -23,6 +23,8 @@ export type MasterProductVariant = {
   /** Например «100×100 см». */
   label: string;
   priceRub: number;
+  /** Верхняя граница, если цена варианта — диапазон (деревянные заготовки). */
+  priceRubMax?: number;
 };
 
 export type MasterProduct = {

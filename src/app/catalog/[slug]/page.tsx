@@ -6,21 +6,36 @@ import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { ALL_PRODUCTS } from "@/lib/products";
+import {
+  appendCatalogReturn,
+  resolveCatalogReturn,
+} from "@/lib/catalog-return-url";
 import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string | string[] }>;
+};
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { from } = await searchParams;
   const product = ALL_PRODUCTS.find((p) => p.slug === slug);
   if (!product) notFound();
+
+  const productSlugs = ALL_PRODUCTS.map((p) => p.slug);
+  const backHref = resolveCatalogReturn(from, productSlugs);
+  const productPath = appendCatalogReturn(
+    `/catalog/${product.slug}`,
+    backHref !== "/catalog" ? backHref : undefined,
+  );
 
   return (
     <LandingShell>
       <section className="py-12 lg:py-16">
         <Container>
           <Link
-            href="/catalog"
+            href={backHref}
             className="text-sm font-medium text-green/70 hover:text-green hover:underline"
           >
             ← Каталог
@@ -59,9 +74,9 @@ export default async function ProductPage({ params }: Props) {
                   title={product.title}
                   price={product.price}
                   priceRub={product.priceFromRub}
-                  backHref="/catalog"
+                  backHref={backHref}
                   catalog="catalog"
-                  productPath={`/catalog/${product.slug}`}
+                  productPath={productPath}
                 />
               </div>
             </div>

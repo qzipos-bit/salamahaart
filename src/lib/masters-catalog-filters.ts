@@ -4,7 +4,7 @@ import {
   MASTERS_WOOD_BLANK_DIAMETERS_CM,
   WOOD_BLANK_CUSTOM_DIA_PARAM,
   WOOD_BLANK_CUSTOM_SLUG,
-  woodBlankDiameterFromSlug,
+  woodBlankProductMatchesDiameter,
   type WoodBlankDiaFilter,
 } from "@/lib/masters-wood-blank-products";
 import type { CatalogPriceSort } from "@/lib/catalog-sort";
@@ -195,7 +195,7 @@ export function filterMastersProducts(
     list = list.filter(
       (p) =>
         p.category === "derev-zagotovki" &&
-        woodBlankDiameterFromSlug(p.slug) === woodDia,
+        woodBlankProductMatchesDiameter(p.slug, woodDia),
     );
   }
   if (priceRange.active) {

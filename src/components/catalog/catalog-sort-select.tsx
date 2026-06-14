@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { startTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -9,7 +10,11 @@ import {
   type CatalogPriceSort,
   parseCatalogSortParam,
 } from "@/lib/catalog-sort";
-import { FILTER_SIDEBAR_SECTION_CLASS } from "@/lib/product-typography";
+import {
+  FILTER_NAV_SUB_ACTIVE_CLASS,
+  FILTER_NAV_SUB_IDLE_CLASS,
+  FILTER_SIDEBAR_SECTION_CLASS,
+} from "@/lib/product-typography";
 
 type ControlledProps = {
   value: CatalogPriceSort | "";
@@ -25,6 +30,13 @@ type Props = {
   value?: CatalogPriceSort | "";
   onChange?: (sort: CatalogPriceSort | "") => void;
 };
+
+function sortNavLinkClass(active: boolean) {
+  return [
+    "block rounded-md px-3 py-2 transition",
+    active ? FILTER_NAV_SUB_ACTIVE_CLASS : FILTER_NAV_SUB_IDLE_CLASS,
+  ].join(" ");
+}
 
 function CatalogSortSelectControl({
   sort,
@@ -66,6 +78,40 @@ function CatalogSortSelectControl({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function CatalogSortNavControl({
+  sort,
+  hrefForSort,
+}: {
+  sort: CatalogPriceSort | "";
+  hrefForSort: (sort: CatalogPriceSort | "") => string;
+}) {
+  return (
+    <div>
+      <p className={FILTER_SIDEBAR_SECTION_CLASS}>Сортировка</p>
+      <ul className="mt-2 flex flex-col gap-0.5 sm:flex-row sm:flex-wrap sm:gap-1">
+        <li>
+          <Link
+            href={hrefForSort("")}
+            className={sortNavLinkClass(sort === "")}
+          >
+            По умолчанию
+          </Link>
+        </li>
+        {CATALOG_PRICE_SORT_OPTIONS.map((option) => (
+          <li key={option.value}>
+            <Link
+              href={hrefForSort(option.value)}
+              className={sortNavLinkClass(sort === option.value)}
+            >
+              {option.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -112,6 +158,24 @@ function RouterCatalogSortSelect({ basePath }: RouterProps) {
   );
 }
 
+function RouterCatalogSortNav({ basePath }: RouterProps) {
+  const searchParams = useSearchParams();
+  const sort = parseCatalogSortParam(searchParams.get("sort") ?? undefined);
+
+  const hrefForSort = (next: CatalogPriceSort | "") => {
+    const sp = new URLSearchParams(searchParams.toString());
+    if (next === CATALOG_PRICE_SORT_ASC || next === CATALOG_PRICE_SORT_DESC) {
+      sp.set("sort", next);
+    } else {
+      sp.delete("sort");
+    }
+    const q = sp.toString();
+    return q ? `${basePath}?${q}` : basePath;
+  };
+
+  return <CatalogSortNavControl sort={sort} hrefForSort={hrefForSort} />;
+}
+
 export function CatalogSortSelect({ basePath, value, onChange }: Props) {
   if (value !== undefined && onChange) {
     return (
@@ -119,4 +183,8 @@ export function CatalogSortSelect({ basePath, value, onChange }: Props) {
     );
   }
   return <RouterCatalogSortSelect basePath={basePath} />;
+}
+
+export function CatalogSortNav({ basePath }: RouterProps) {
+  return <RouterCatalogSortNav basePath={basePath} />;
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
+import { Button } from "@/components/ui/button";
 import { CATALOG_HUB_PATH, CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
+import { MASTERS_CATALOG_PATH } from "@/lib/masters-products";
 import { SEO_CATALOG_LANDINGS } from "@/lib/seo-catalog-landings";
 import { SITE } from "@/lib/site";
 
@@ -18,6 +20,11 @@ export function Footer() {
               Авторские изделия из эпоксидной смолы: мебель, декор, сохранение
               цветов. Ручная работа и внимание к деталям.
             </p>
+            <div className="mt-6">
+              <Button href={MASTERS_CATALOG_PATH} className="!py-2.5 !text-sm">
+                Товары для мастеров
+              </Button>
+            </div>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 md:col-span-8 md:col-start-5 lg:col-start-5">
             <div>
@@ -53,21 +60,13 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href={CATALOG_SHOP_PATH} className="hover:text-green">
+                    Магазин
+                  </Link>
+                </li>
+                <li>
                   <Link href={CATALOG_HUB_PATH} className="hover:text-green">
                     Каталог изделий
-                  </Link>
-                </li>
-                <li>
-                  <Link href={CATALOG_SHOP_PATH} className="hover:text-green">
-                    Все товары
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/tovary-dlya-masterov"
-                    className="hover:text-green"
-                  >
-                    Товары для мастеров
                   </Link>
                 </li>
                 <li>

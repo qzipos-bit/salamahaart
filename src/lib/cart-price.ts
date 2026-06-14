@@ -1,5 +1,5 @@
 import type { CartItem } from "@/lib/cart-types";
-import { isWoodBlankCustomSlug } from "@/lib/masters-wood-blank-products";
+import { isWoodBlankProductSlug } from "@/lib/masters-wood-blank-products";
 
 /** Из «1 050 ₽», «от 5 790 ₽», «6 250 ₽ (оптовая цена)» — первое число. */
 export function parsePriceRubFromLabel(label: string): number | null {
@@ -45,7 +45,7 @@ export function formatCartRubRange(min: number, max: number): string {
 export function isWoodBlankCartItem(item: CartItem): boolean {
   return (
     item.catalog === "masters" &&
-    (item.slug.startsWith("derevo-d") || isWoodBlankCustomSlug(item.slug))
+    isWoodBlankProductSlug(item.slug)
   );
 }
 

@@ -1,5 +1,5 @@
 import type { MasterProduct } from "@/lib/masters-products";
-import { formatDiameterCm, formatDiameterDescription, formatDiameterListCm } from "@/lib/masters-format";
+import { formatDiameterCm, formatDiameterListCm } from "@/lib/masters-format";
 import {
   formatMastersRub,
   SLIDING_BORT_LINEAR_METER_RUB,
@@ -25,32 +25,84 @@ function formDescription(lines: string[]): string {
   return [...lines, "", ...MASTERS_FORM_NOTES].join("\n");
 }
 
-function rimProduct(diameterCm: number, priceRub: number): MasterProduct {
+function rimVariantId(diameterCm: number): string {
+  return `d${diameterCm}`;
+}
+
+function buildRoundRimVariants(): MasterProduct["variants"] {
+  return RIM_PRICES.map(({ d, price }) => ({
+    id: rimVariantId(d),
+    label: formatDiameterCm(d),
+    priceRub: price,
+  }));
+}
+
+export const ROUND_RIM_SLUG = "obod-krugovoj" as const;
+
+const ROUND_RIM_IMAGES = ["/masters-forms/obod-krugovoj-01.png"] as const;
+
+function roundRimProduct(): MasterProduct {
+  const variants = buildRoundRimVariants() ?? [];
+  const prices = RIM_PRICES.map((row) => row.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+
   return {
-    slug: `obod-krug-${diameterCm}`,
-    title: `Обод круговой ${formatDiameterCm(diameterCm)}`,
-    price: formatRub(priceRub),
-    priceFromRub: priceRub,
+    slug: ROUND_RIM_SLUG,
+    title: "Обод круговой",
+    price: `${formatRub(min)}–${formatRub(max)}`,
+    priceFromRub: min,
+    priceToRub: max,
     category: "formy-krugi-bez-dna",
-    image: PLACEHOLDER,
+    image: ROUND_RIM_IMAGES[0],
+    images: [...ROUND_RIM_IMAGES],
+    variants,
+    defaultVariantId: rimVariantId(30),
     description: formDescription([
-      `Обод по отдельности — без дна.`,
-      formatDiameterDescription(diameterCm),
+      "Круговой обод без дна — по отдельности.",
+      `Диаметры: ${formatDiameterListCm(RIM_PRICES.map((r) => r.d))}.`,
+      "Выберите размер на карточке товара — цена указана для каждого диаметра.",
     ]),
   };
 }
 
-function fullCircleForm(diameterCm: number, priceRub: number): MasterProduct {
+function fullCircleVariantId(diameterCm: number): string {
+  return `d${diameterCm}`;
+}
+
+function buildFullCircleWithBottomVariants(): MasterProduct["variants"] {
+  return FULL_CIRCLE_PRICES.map(({ d, price }) => ({
+    id: fullCircleVariantId(d),
+    label: formatDiameterCm(d),
+    priceRub: price,
+  }));
+}
+
+export const FULL_CIRCLE_WITH_BOTTOM_SLUG = "forma-krugi-s-domom" as const;
+
+const FULL_CIRCLE_IMAGES = ["/masters-forms/krugi-s-domom-01.png"] as const;
+
+function fullCircleWithBottomProduct(): MasterProduct {
+  const variants = buildFullCircleWithBottomVariants() ?? [];
+  const prices = FULL_CIRCLE_PRICES.map((row) => row.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+
   return {
-    slug: `forma-krug-s-domom-${diameterCm}`,
-    title: `Полная форма с дном — круг ${formatDiameterCm(diameterCm)}`,
-    price: formatRub(priceRub),
-    priceFromRub: priceRub,
+    slug: FULL_CIRCLE_WITH_BOTTOM_SLUG,
+    title: "Круги с дном",
+    price: `${formatRub(min)}–${formatRub(max)}`,
+    priceFromRub: min,
+    priceToRub: max,
     category: "formy-krugi-dom",
-    image: PLACEHOLDER,
+    image: FULL_CIRCLE_IMAGES[0],
+    images: [...FULL_CIRCLE_IMAGES],
+    variants,
+    defaultVariantId: fullCircleVariantId(40),
     description: formDescription([
-      "Полная круговая форма с дном.",
-      formatDiameterDescription(diameterCm),
+      "Полная круговая форма с дном — готовое решение для заливки.",
+      `Диаметры: ${formatDiameterListCm(FULL_CIRCLE_PRICES.map((r) => r.d))}.`,
+      "Выберите размер на карточке товара — цена указана для каждого диаметра.",
     ]),
   };
 }
@@ -76,6 +128,14 @@ const FULL_CIRCLE_PRICES: Array<{ d: number; price: number }> = [
   { d: 100, price: 11_990 },
 ];
 
+const SLIDING_FORM_WITH_BASE_IMAGE =
+  "/masters-forms/razdvizhnaya-opalubka-osnova-01.png" as const;
+
+const SLIDING_FORM_WITH_BASE_PRICE = 15_490;
+
+const RIM_SET_WITH_BASE_IMAGE =
+  "/masters-forms/nabor-obodov-osnova-01.png" as const;
+
 export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   // Готовое решение → набор круги с дном
   {
@@ -84,7 +144,8 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
     price: formatRub(9_490),
     priceFromRub: 9_490,
     category: "formy-nabor-krugi-dom",
-    image: PLACEHOLDER,
+    image: RIM_SET_WITH_BASE_IMAGE,
+    images: [RIM_SET_WITH_BASE_IMAGE],
     badge: "hit",
     description: formDescription([
       "Готовое решение для старта: закрывает 90% задач.",
@@ -95,10 +156,11 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   {
     slug: "razdvizhnaya-opalubka-osnova-60x60",
     title: "Раздвижная опалубка + основа, 60×60 см",
-    price: formatRub(10_490),
-    priceFromRub: 10_490,
+    price: formatRub(SLIDING_FORM_WITH_BASE_PRICE),
+    priceFromRub: SLIDING_FORM_WITH_BASE_PRICE,
     category: "formy-razdvizhnaya",
-    image: PLACEHOLDER,
+    image: SLIDING_FORM_WITH_BASE_IMAGE,
+    images: [SLIDING_FORM_WITH_BASE_IMAGE],
     description: formDescription([
       "Профессиональное решение для большей свободы и нестандартных проектов.",
       "Размер: 60×60 см + основа.",
@@ -106,14 +168,15 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
   },
   {
     slug: "forma-pryam-s-domom-100x100",
-    title: "Форма с дном, 100×100 см",
-    price: formatRub(11_490),
-    priceFromRub: 11_490,
+    title: "Раздвижная опалубка + основа, 100×100 см",
+    price: formatRub(SLIDING_FORM_WITH_BASE_PRICE),
+    priceFromRub: SLIDING_FORM_WITH_BASE_PRICE,
     category: "formy-razdvizhnaya",
-    image: PLACEHOLDER,
+    image: SLIDING_FORM_WITH_BASE_IMAGE,
+    images: [SLIDING_FORM_WITH_BASE_IMAGE],
     description: formDescription([
-      "Прямоугольная форма с дном.",
-      "Размер: 100×100 см.",
+      "Профессиональное решение для больших и нестандартных проектов.",
+      "Размер: 100×100 см + основа.",
     ]),
   },
   // Раздвижные борта без дна
@@ -143,8 +206,8 @@ export const MASTERS_FORM_PRODUCTS: MasterProduct[] = [
       "Все плашки совместимы с друг другом — можно комбинировать и расширять набор.",
     ]),
   },
-  ...RIM_PRICES.map(({ d, price }) => rimProduct(d, price)),
-  ...FULL_CIRCLE_PRICES.map(({ d, price }) => fullCircleForm(d, price)),
+  roundRimProduct(),
+  fullCircleWithBottomProduct(),
   // Пазловые формы
   {
     slug: "pazl-zamok-10",

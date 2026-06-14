@@ -43,8 +43,24 @@ const SILIKAGEL_ROWS: SilikagelRow[] = [
     image: SILIKAGEL_3KG_IMAGES[0],
     images: [...SILIKAGEL_3KG_IMAGES],
   },
-  { slug: "silikagel-5kg", weightKg: 5, priceRub: 1_590, badge: "hit" },
-  { slug: "silikagel-10kg", weightKg: 10, priceRub: 2_990 },
+  {
+    slug: "silikagel-5kg",
+    weightKg: 5,
+    priceRub: 1_590,
+    badge: "hit",
+    image: "/masters-silikagel/silikagel-5kg-02.png",
+    images: ["/masters-silikagel/silikagel-5kg-02.png"],
+  },
+  {
+    slug: "silikagel-10kg",
+    weightKg: 10,
+    priceRub: 2_990,
+    image: "/masters-silikagel/silikagel-10kg-02.png",
+    images: [
+      "/masters-silikagel/silikagel-10kg-02.png",
+      "/masters-silikagel/silikagel-10kg-03.png",
+    ],
+  },
   {
     slug: "silikagel-25kg",
     weightKg: 25,
@@ -52,6 +68,11 @@ const SILIKAGEL_ROWS: SilikagelRow[] = [
     badge: "new",
     priceLabel: "6 250 ₽ (оптовая цена)",
     descriptionExtra: "Оптовая цена.",
+    image: "/masters-silikagel/silikagel-25kg-02.png",
+    images: [
+      "/masters-silikagel/silikagel-25kg-02.png",
+      "/masters-silikagel/silikagel-25kg-03.png",
+    ],
   },
 ];
 

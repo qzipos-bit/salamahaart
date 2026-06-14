@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ProductCard } from "@/components/shop/product-card";
 import type { Product, ProductCatalogCategory } from "@/components/shop/product-card";
@@ -27,6 +28,8 @@ type Props = {
 };
 
 export function CatalogInteractive({ products }: Props) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const extent = useMemo(() => getCatalogPriceExtent(products), [products]);
   const [cat, setCat] = useState<ProductCatalogCategory | "">("");
   const [sort, setSort] = useState<CatalogPriceSort | "">("");
@@ -96,6 +99,11 @@ export function CatalogInteractive({ products }: Props) {
       ),
     [products, cat, priceRange, sort],
   );
+
+  const catalogReturnTo = useMemo(() => {
+    const q = searchParams.toString();
+    return q ? `${pathname}?${q}` : pathname;
+  }, [pathname, searchParams]);
 
   const total = products.length;
   const hasFilters = Boolean(cat || priceRange.active || sort);
@@ -204,6 +212,7 @@ export function CatalogInteractive({ products }: Props) {
                     product={p}
                     titleLevel={2}
                     stableLayout
+                    returnTo={catalogReturnTo}
                   />
                 ))}
               </div>
