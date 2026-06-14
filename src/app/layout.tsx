@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Italianno, Manrope } from "next/font/google";
+import { YandexMetrika } from "@/components/analytics/yandex-metrika";
 import { OrganizationJsonLd } from "@/components/seo/organization-jsonld";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -56,6 +57,7 @@ export default function RootLayout({
     >
       <body className="relative min-h-full flex flex-col">
         <OrganizationJsonLd />
+        <YandexMetrika />
         {children}
       </body>
     </html>
