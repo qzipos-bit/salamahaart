@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
+import { JsonLd } from "@/components/JsonLd";
+import { buildBlogPostingSchemas } from "@/lib/schema/blog";
 import {
   BLOG_CATEGORY_LABEL,
   formatBlogDate,
@@ -37,22 +39,9 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getBlogPostBySlug(slug);
   if (!post) notFound();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    image: post.coverImage,
-  };
-
   return (
     <LandingShell>
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={buildBlogPostingSchemas(post)} />
       <article className="relative overflow-hidden bg-gradient-to-b from-bg via-cream/50 to-bg pb-14 pt-10 lg:pb-20 lg:pt-12">
         <div
           className="pointer-events-none absolute left-0 top-0 h-48 max-w-xl bg-gradient-to-br from-gold/10 via-transparent to-transparent opacity-90"

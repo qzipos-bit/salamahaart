@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { LandingShell } from "@/components/layout/landing-shell";
+import { JsonLd } from "@/components/JsonLd";
 import { TableEpoxyCalculator } from "@/components/table-epoxy-calculator/table-epoxy-calculator";
+import { buildWebApplicationSchemas } from "@/lib/schema/web-application";
 import { SITE } from "@/lib/site";
 const title = "Калькулятор стола из эпоксидной смолы — примерная стоимость";
 const description =
@@ -22,6 +24,13 @@ export const metadata: Metadata = {
 export default function KalkulyatorStolaPage() {
   return (
     <LandingShell>
+      <JsonLd
+        data={buildWebApplicationSchemas({
+          name: "Калькулятор стола из эпоксидной смолы",
+          path: "/kalkulyator-stola",
+          breadcrumbLabel: "Калькулятор стола",
+        })}
+      />
       <section
         className="relative overflow-hidden"
         aria-labelledby="calc-page-heading"

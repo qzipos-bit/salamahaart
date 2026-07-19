@@ -56,8 +56,10 @@ export function resolveSiteUrl(request?: Request): string {
   return `${proto}://${host}`;
 }
 
-/** Стабильный @id Organization в JSON-LD — тот же URI, что в `OrganizationJsonLd`. */
-export function siteOrganizationJsonLdId(): string | null {
-  const base = SITE.siteUrl;
-  return base ? `${base}/#organization` : null;
+/** Стабильный @id Organization в JSON-LD — тот же URI, что в root layout. */
+export function siteOrganizationJsonLdId(): string {
+  const base = (
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://salamahaart.vercel.app"
+  ).replace(/\/$/, "");
+  return `${base}/#organization`;
 }

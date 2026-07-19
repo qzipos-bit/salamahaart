@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductCard } from "@/components/shop/product-card";
 import { Button } from "@/components/ui/button";
 import { ALL_PRODUCTS } from "@/lib/products";
@@ -11,6 +12,7 @@ import {
   type SeoCatalogLanding,
   type SeoCatalogLandingKey,
 } from "@/lib/seo-catalog-landings";
+import { buildSeoCatalogLandingSchemas } from "@/lib/schema/collection-page";
 import { SITE } from "@/lib/site";
 
 export function seoCatalogLandingMetadata(
@@ -23,117 +25,6 @@ export function seoCatalogLandingMetadata(
     description: L.description,
     ...(canonical ? { alternates: { canonical } } : {}),
   };
-}
-
-function faqAnswerPlainText(answer: string): string {
-  return answer.replace(/\n• /g, ". ").replace(/\n+/g, " ").trim();
-}
-
-function CatalogLandingJsonLd({
-  L,
-  productUrls,
-}: {
-  L: SeoCatalogLanding;
-  productUrls: string[];
-}) {
-  const base = SITE.siteUrl;
-  if (!base) return null;
-
-  const pageUrl = `${base}/${L.path}`;
-  const graph: Record<string, unknown>[] = [];
-
-  const breadcrumbItems: Record<string, unknown>[] = [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Главная",
-      item: `${base}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Каталог",
-      item: `${base}/catalog`,
-    },
-  ];
-  let pos = 3;
-  for (const t of L.breadcrumbTrail ?? []) {
-    const href = t.href?.startsWith("/") ? t.href : t.href ? `/${t.href}` : null;
-    breadcrumbItems.push({
-      "@type": "ListItem",
-      position: pos,
-      name: t.label,
-      item: href ? `${base}${href}` : `${base}/catalog`,
-    });
-    pos += 1;
-  }
-  breadcrumbItems.push({
-    "@type": "ListItem",
-    position: pos,
-    name: L.h1,
-    item: pageUrl,
-  });
-
-  const breadcrumb = {
-    "@type": "BreadcrumbList",
-    "@id": `${pageUrl}#breadcrumb`,
-    itemListElement: breadcrumbItems,
-  };
-
-  const webPage: Record<string, unknown> = {
-    "@type": "WebPage",
-    "@id": `${pageUrl}#webpage`,
-    url: pageUrl,
-    name: L.title,
-    description: L.description,
-    inLanguage: "ru-RU",
-    isPartOf: {
-      "@type": "WebSite",
-      url: base,
-      name: SITE.name,
-    },
-    breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
-  };
-
-  if (productUrls.length > 0) {
-    webPage.mainEntity = {
-      "@type": "ItemList",
-      numberOfItems: productUrls.length,
-      itemListElement: productUrls.map((url, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: url,
-      })),
-    };
-  }
-
-  graph.push(webPage);
-  graph.push(breadcrumb);
-
-  if (L.faq?.length) {
-    graph.push({
-      "@type": "FAQPage",
-      "@id": `${pageUrl}#faq`,
-      mainEntity: L.faq.map((item) => ({
-        "@type": "Question",
-        name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faqAnswerPlainText(item.answer),
-        },
-      })),
-    });
-  }
-
-  const payload = { "@context": "https://schema.org", "@graph": graph };
-
-  return (
-    <script
-      type="application/ld+json"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
-    />
-  );
 }
 
 function BreadcrumbsNav({ L }: { L: SeoCatalogLanding }) {
@@ -177,11 +68,6 @@ export function SeoCatalogLandingView({
 }) {
   const L = getLandingByKey(landingKey);
   const products = ALL_PRODUCTS.filter((p) => L.productSlugs.includes(p.slug));
-  const base = SITE.siteUrl;
-  const productUrls = base
-    ? products.map((p) => `${base}/catalog/${p.slug}`)
-    : [];
-
   const siblings = Object.values(SEO_CATALOG_LANDINGS).filter(
     (x) => x.key !== L.key,
   );
@@ -195,7 +81,7 @@ export function SeoCatalogLandingView({
 
   return (
     <LandingShell>
-      <CatalogLandingJsonLd L={L} productUrls={productUrls} />
+      <JsonLd data={buildSeoCatalogLandingSchemas(L)} />
       <section className="py-12 lg:py-16">
         <Container>
           <BreadcrumbsNav L={L} />

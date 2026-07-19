@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { JsonLd } from "@/components/JsonLd";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
+import { buildBlogIndexSchemas } from "@/lib/schema/blog";
 import {
   BLOG_CATEGORY_LABEL,
   type BlogCategory,
@@ -34,6 +36,7 @@ export default async function BlogPage({ searchParams }: Props) {
 
   return (
     <LandingShell>
+      <JsonLd data={buildBlogIndexSchemas()} />
       <div className="relative overflow-hidden bg-gradient-to-b from-bg via-cream/80 to-sage-muted/25 py-10 lg:py-14">
         <div
           className="pointer-events-none absolute left-0 top-0 h-56 w-full max-w-2xl bg-gradient-to-br from-gold/10 via-transparent to-transparent opacity-90"

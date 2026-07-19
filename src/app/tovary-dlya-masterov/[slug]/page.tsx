@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -19,12 +20,47 @@ import {
 } from "@/lib/masters-wood-blank-products";
 import { FULL_CIRCLE_WITH_BOTTOM_SLUG, ROUND_RIM_SLUG } from "@/lib/masters-form-products";
 import { resolveMastersCatalogReturn, appendCatalogReturn } from "@/lib/catalog-return-url";
+import { getMastersProductSeo } from "@/lib/masters-product-seo";
+import { JsonLd } from "@/components/JsonLd";
+import { buildMastersProductPageSchemas } from "@/lib/schema/product-page";
 import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
+import { SITE } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ from?: string | string[] }>;
 };
+
+export async function generateStaticParams() {
+  return MASTERS_PRODUCTS.map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const product = MASTERS_PRODUCTS.find((p) => p.slug === slug);
+  if (!product) return { title: "Товар не найден" };
+
+  const seo = getMastersProductSeo(slug);
+  const title = seo?.title ?? `${product.title} | Salamaha`;
+  const description =
+    seo?.description ??
+    `«${product.title}» для мастеров эпоксидной смолы. Купить в Краснодаре, доставка по РФ.`;
+  const canonical = SITE.siteUrl
+    ? `${SITE.siteUrl}${MASTERS_CATALOG_PATH}/${slug}`
+    : undefined;
+
+  return {
+    title,
+    description,
+    alternates: canonical ? { canonical } : undefined,
+    openGraph: {
+      title,
+      description,
+      ...(canonical ? { url: canonical } : {}),
+      images: [{ url: product.image, alt: product.title }],
+    },
+  };
+}
 
 export default async function MastersProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
@@ -50,6 +86,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
 
   return (
     <LandingShell>
+      <JsonLd data={buildMastersProductPageSchemas(product)} />
       <section className="py-12 lg:py-16">
         <Container>
           <Suspense fallback={null}>

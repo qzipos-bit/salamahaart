@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
+import { JsonLd } from "@/components/JsonLd";
 import { CatalogInteractive } from "@/components/catalog/catalog-interactive";
 import { CATALOG_HUB_PATH } from "@/lib/catalog-filters";
+import { buildCatalogShopSchemas } from "@/lib/schema/collection-page";
 import { ALL_PRODUCTS } from "@/lib/products";
 
 export const dynamic = "force-static";
@@ -17,6 +19,7 @@ export const metadata: Metadata = {
 export default function CatalogShopPage() {
   return (
     <LandingShell>
+      <JsonLd data={buildCatalogShopSchemas()} />
       <section className="py-12 lg:py-16">
         <Container>
           <Link

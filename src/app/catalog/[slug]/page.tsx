@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -7,17 +8,50 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { CatalogBackLink } from "@/components/shop/catalog-back-link";
 import { ALL_PRODUCTS } from "@/lib/products";
+import { getProductSeo } from "@/lib/product-seo";
 import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import {
   appendCatalogReturn,
   resolveCatalogReturn,
 } from "@/lib/catalog-return-url";
 import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
+import { JsonLd } from "@/components/JsonLd";
+import { buildCatalogProductPageSchemas } from "@/lib/schema/product-page";
+import { SITE } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ from?: string | string[] }>;
 };
+
+export async function generateStaticParams() {
+  return ALL_PRODUCTS.map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const product = ALL_PRODUCTS.find((p) => p.slug === slug);
+  if (!product) return { title: "Товар не найден" };
+
+  const seo = getProductSeo(slug);
+  const title = seo?.title ?? `${product.title} | Salamaha`;
+  const description =
+    seo?.description ??
+    `Изделие «${product.title}» из эпоксидной смолы и дерева ручной работы. На заказ в Краснодаре, доставка по РФ.`;
+  const canonical = SITE.siteUrl ? `${SITE.siteUrl}/catalog/${slug}` : undefined;
+
+  return {
+    title,
+    description,
+    alternates: canonical ? { canonical } : undefined,
+    openGraph: {
+      title,
+      description,
+      ...(canonical ? { url: canonical } : {}),
+      images: [{ url: product.image, alt: product.title }],
+    },
+  };
+}
 
 export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
@@ -34,6 +68,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   return (
     <LandingShell>
+      <JsonLd data={buildCatalogProductPageSchemas(product)} />
       <section className="py-12 lg:py-16">
         <Container>
           <Suspense fallback={null}>

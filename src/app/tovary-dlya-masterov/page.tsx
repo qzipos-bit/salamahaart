@@ -24,6 +24,8 @@ import {
   parseCatalogSortParam,
   sortProductsByPriceFromRub,
 } from "@/lib/catalog-sort";
+import { JsonLd } from "@/components/JsonLd";
+import { buildMastersCatalogSchemas } from "@/lib/schema/collection-page";
 import { buildMastersCatalogReturnUrl } from "@/lib/catalog-return-url";
 
 export const metadata: Metadata = {
@@ -74,6 +76,7 @@ export default async function MastersCatalogPage({ searchParams }: Props) {
 
   return (
     <LandingShell>
+      <JsonLd data={buildMastersCatalogSchemas()} />
       <section className="py-12 lg:py-16">
         <Container>
           <Suspense fallback={null}>

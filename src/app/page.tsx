@@ -1,4 +1,5 @@
 import { LandingShell } from "@/components/layout/landing-shell";
+import { JsonLd } from "@/components/JsonLd";
 import { About } from "@/components/sections/about";
 import { Advantages } from "@/components/sections/advantages";
 import { BlogPreview } from "@/components/sections/blog-preview";
@@ -12,10 +13,12 @@ import { Gallery } from "@/components/sections/gallery";
 import { Hero } from "@/components/sections/hero";
 import { QuickLead } from "@/components/sections/quick-lead";
 import { Reviews } from "@/components/sections/reviews";
+import { buildHomePageSchemas } from "@/lib/schema/home";
 
 export default function Home() {
   return (
     <LandingShell>
+      <JsonLd data={buildHomePageSchemas()} />
       <Hero />
       <About />
       <Categories />

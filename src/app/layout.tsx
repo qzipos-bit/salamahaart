@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Italianno, Manrope } from "next/font/google";
+import { JsonLd } from "@/components/JsonLd";
 import { YandexMetrika } from "@/components/analytics/yandex-metrika";
-import { OrganizationJsonLd } from "@/components/seo/organization-jsonld";
+import { buildGlobalSiteSchemas } from "@/lib/schema/organization";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -56,7 +57,7 @@ export default function RootLayout({
       className={`${manrope.variable} ${cormorant.variable} ${italianno.variable} h-full antialiased`}
     >
       <body className="relative min-h-full flex flex-col">
-        <OrganizationJsonLd />
+        <JsonLd data={buildGlobalSiteSchemas()} />
         <YandexMetrika />
         {children}
       </body>
