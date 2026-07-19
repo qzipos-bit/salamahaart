@@ -126,7 +126,7 @@ export function SmolaDerevoLanding() {
                   href="#countdown"
                   className="font-medium text-green/80 underline decoration-green/20 underline-offset-[4px] hover:text-green hover:decoration-green/45"
                 >
-                  Таймер
+                  Спецпредложение
                 </Link>
                 <span className="text-fg/25" aria-hidden>
                   ·

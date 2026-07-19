@@ -19,19 +19,19 @@
       "name": "Поднос с цветами",
       "note": "для сервировки и декора",
       "link": "/catalog/podnos-suhocvety-laguna",
-      "image": "/product-fotaramka-30x40.webp"
+      "image": "/product-fotaramka-suhocvety.webp"
     },
     {
       "name": "Панно на стену",
       "note": "цветочная композиция под смолой",
-      "link": null,
-      "image": "/category-kartiny.webp"
+      "link": "/catalog/panno-stena-suhocvety",
+      "image": "/product-panno-stena-cvety.webp"
     },
     {
-      "name": "Настенные часы с цветами",
-      "note": "сухоцветы под прозрачной смолой",
+      "name": "Настенные часы «Программист»",
+      "note": "компьютерные платы в чёрной смоле",
       "link": "/catalog/chasy-suhocvety-laguna",
-      "image": "/product-chasy-live.webp"
+      "image": "/product-chasy-programmist.webp"
     },
     {
       "name": "Интерьерный блок / пресс-папье",
@@ -82,12 +82,12 @@
   "priceNote": "Стоимость зависит от формы изделия, размера и сложности композиции. Точную смету и срок называем после обсуждения букета и формата — обычно сушка цветов занимает больше всего времени. Свежие цветы принимаем в течение 1–2 дней после события; напишите заранее, чтобы забронировать место в очереди.",
   "gallery": [
     {
-      "image": "/product-fotaramka-30x40.webp",
+      "image": "/product-fotaramka-suhocvety.webp",
       "caption": "Поднос с сухоцветами — сервировка и декор"
     },
     {
-      "image": "/product-chasy-live.webp",
-      "caption": "Настенные часы с цветами — для гостиной или спальни"
+      "image": "/product-chasy-programmist.webp",
+      "caption": "Настенные часы «Программист» — подарок IT-специалисту"
     },
     {
       "image": "/category-bukety.webp",
@@ -142,15 +142,15 @@
       "href": "/catalog/stoly/s-cvetami"
     },
     {
-      "label": "Поднос «Лагуна» с сухоцветами",
+      "label": "Поднос «Весна» с сухоцветами",
       "href": "/catalog/podnos-suhocvety-laguna"
     },
     {
-      "label": "Часы с сухоцветами",
+      "label": "Часы «Программист»",
       "href": "/catalog/chasy-suhocvety-laguna"
     },
     {
-      "label": "Поднос Live Edge с мхом",
+      "label": "Подставки с каменной фактурой",
       "href": "/catalog/podnos-live-edge-moss"
     }
   ],

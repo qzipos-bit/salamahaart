@@ -67,7 +67,11 @@ export default async function BlogPostPage({ params }: Props) {
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-fg/75">{post.excerpt}</p>
 
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-[var(--radius-lg)] border border-green/10 shadow-[var(--shadow-sm)]">
+          <div
+            className={`relative mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-green/10 shadow-[var(--shadow-sm)] ${
+              post.coverAspect === "4/3" ? "aspect-[4/3]" : "aspect-[16/9]"
+            }`}
+          >
             <Image
               src={post.coverImage}
               alt={post.coverAlt}

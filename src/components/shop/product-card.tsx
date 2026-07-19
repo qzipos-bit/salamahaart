@@ -38,6 +38,8 @@ export type Product = {
   priceFromRub: number;
   category: ProductCatalogCategory;
   image: string;
+  /** Дополнительные фото для галереи на странице товара */
+  images?: string[];
   badge?: "hit" | "sale" | "new";
 };
 

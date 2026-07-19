@@ -4,14 +4,14 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LandingShell } from "@/components/layout/landing-shell";
 import { Container } from "@/components/layout/container";
-import { Badge } from "@/components/ui/badge";
+import { MastersProductGallery } from "@/components/shop/masters-product-gallery";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { CatalogBackLink } from "@/components/shop/catalog-back-link";
 import {
   ProductPageContentDetails,
   ProductPageLead,
 } from "@/components/shop/product-page-content-blocks";
-import { ALL_PRODUCTS } from "@/lib/products";
+import { ALL_PRODUCTS, catalogProductGalleryImages } from "@/lib/products";
 import { getProductSeo } from "@/lib/product-seo";
 import {
   catalogLandingLink,
@@ -75,6 +75,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
   );
   const pageContent = getCatalogProductPageContent(product.slug);
   const categoryLanding = catalogLandingLink(product.slug);
+  const galleryImages = catalogProductGalleryImages(product);
 
   return (
     <LandingShell>
@@ -92,21 +93,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
             </CatalogBackLink>
           </Suspense>
           <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] border border-green/10 shadow-[var(--shadow-sm)]">
-              <Image
-                src={product.image}
-                alt={product.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                priority
-              />
-              {product.badge ? (
-                <div className="absolute left-4 top-4">
-                  <Badge kind={product.badge} />
-                </div>
-              ) : null}
-            </div>
+            <MastersProductGallery
+              images={galleryImages}
+              alt={product.title}
+              badge={product.badge}
+            />
             <div>
               <h1 className={PRODUCT_PAGE_TITLE_CLASS}>
                 {product.title}

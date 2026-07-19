@@ -5,6 +5,12 @@ import type {
 import type { CatalogPriceSort } from "@/lib/catalog-sort";
 import { parseCatalogSortParam } from "@/lib/catalog-sort";
 import { CATALOG_URL_SYNC_EVENT } from "@/lib/catalog-return-url";
+import catalogProductContent from "@/lib/data/catalog-product-content.json";
+
+const FLOWER_MATERIAL_RE = /сухоцвет|мимоз/i;
+const FLOWER_TEXT_RE =
+  /сухоцвет|мимоз|ваши цветы|цветы из букета|с цветами|цветами в/i;
+const FLOWER_TITLE_RE = /сухоцвет|с цветами|мимоз/i;
 
 export const CATALOG_CATEGORY_LABELS: Record<ProductCatalogCategory, string> = {
   stoly: "Столы",
@@ -147,6 +153,31 @@ export function parseCatalogPriceParams(
   return { active: true, min: lo, max: hi };
 }
 
+/** Изделие с сухоцветами / цветами в смоле — попадает и в фильтр «Букеты в смоле». */
+export function productHasFlowers(product: Product): boolean {
+  if (product.category === "bukety") return true;
+
+  const content =
+    catalogProductContent[product.slug as keyof typeof catalogProductContent];
+  const material =
+    content?.attributes?.find((a) => a.name === "Материал")?.value ?? "";
+
+  if (FLOWER_MATERIAL_RE.test(material)) return true;
+  if (FLOWER_TEXT_RE.test(content?.description ?? "")) return true;
+  if (FLOWER_TITLE_RE.test(product.title)) return true;
+
+  return false;
+}
+
+export function productMatchesCatalogCategory(
+  product: Product,
+  cat: ProductCatalogCategory,
+): boolean {
+  if (product.category === cat) return true;
+  if (cat === "bukety" && productHasFlowers(product)) return true;
+  return false;
+}
+
 export function filterCatalogProducts(
   products: Product[],
   cat: string | undefined,
@@ -154,7 +185,9 @@ export function filterCatalogProducts(
 ): Product[] {
   let list = products;
   if (cat && CATALOG_CATEGORIES.includes(cat as ProductCatalogCategory)) {
-    list = list.filter((p) => p.category === cat);
+    list = list.filter((p) =>
+      productMatchesCatalogCategory(p, cat as ProductCatalogCategory),
+    );
   }
   if (priceRange.active) {
     list = list.filter(

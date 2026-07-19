@@ -28,8 +28,9 @@ import {
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
+/** text-base (16px) на мобильных — иначе iOS Safari зумит страницу при фокусе. */
 const fieldClass =
-  "w-full rounded-xl border border-green/20 bg-white px-4 py-2.5 text-sm text-fg placeholder:text-fg/45 outline-none focus:border-green/45";
+  "w-full rounded-xl border border-green/20 bg-white px-4 py-2.5 text-base text-fg placeholder:text-fg/45 outline-none focus:border-green/45 md:text-sm";
 
 export function CartModal() {
   const {
@@ -348,7 +349,7 @@ export function CartModal() {
                         onChange={(e) =>
                           setQuantity(item.id, Number(e.target.value))
                         }
-                        className="w-16 rounded-lg border border-green/20 bg-white px-2 py-1.5 text-sm font-medium text-fg"
+                        className="w-16 rounded-lg border border-green/20 bg-white px-2 py-1.5 text-base font-medium text-fg md:text-sm"
                       />
                     </div>
                   </li>

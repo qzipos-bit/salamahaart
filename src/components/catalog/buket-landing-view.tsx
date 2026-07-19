@@ -10,9 +10,9 @@ import { SITE } from "@/lib/site";
 
 const INTERNAL_LINK_IMAGES: Record<string, string> = {
   "/catalog/stoly/s-cvetami": "/category-stoly.webp",
-  "/catalog/podnos-suhocvety-laguna": "/product-fotaramka-30x40.webp",
-  "/catalog/chasy-suhocvety-laguna": "/product-chasy-live.webp",
-  "/catalog/podnos-live-edge-moss": "/product-stol-river.webp",
+  "/catalog/podnos-suhocvety-laguna": "/product-podnos-suhocvety-vesna.webp",
+  "/catalog/chasy-suhocvety-laguna": "/product-chasy-programmist.webp",
+  "/catalog/podnos-live-edge-moss": "/product-podstavki-kamennaya-faktura.webp",
 };
 
 const OCCASION_ACCENTS = [
