@@ -21,6 +21,11 @@ import {
 import { FULL_CIRCLE_WITH_BOTTOM_SLUG, ROUND_RIM_SLUG } from "@/lib/masters-form-products";
 import { resolveMastersCatalogReturn, appendCatalogReturn } from "@/lib/catalog-return-url";
 import { getMastersProductSeo } from "@/lib/masters-product-seo";
+import { getMastersProductPageContent } from "@/lib/product-page-content";
+import {
+  ProductPageContentDetails,
+  ProductPageLead,
+} from "@/components/shop/product-page-content-blocks";
 import { JsonLd } from "@/components/JsonLd";
 import { buildMastersProductPageSchemas } from "@/lib/schema/product-page";
 import { PRODUCT_PAGE_TITLE_CLASS, PRODUCT_PAGE_PRICE_CLASS } from "@/lib/product-typography";
@@ -83,6 +88,7 @@ export default async function MastersProductPage({ params, searchParams }: Props
   const woodBlankKind = getWoodBlankProductKind(product.slug);
   const hasVariants = product.variants && product.variants.length > 0;
   const isWoodCustom = product.slug === WOOD_BLANK_CUSTOM_SLUG;
+  const pageContent = getMastersProductPageContent(product.slug);
 
   return (
     <LandingShell>
@@ -110,11 +116,13 @@ export default async function MastersProductPage({ params, searchParams }: Props
                 {product.title}
               </h1>
 
-              {product.description && !woodBlankKind && !isWoodCustom ? (
+              {pageContent && !woodBlankKind && !isWoodCustom ? (
+                <ProductPageLead content={pageContent} />
+              ) : product.description && !woodBlankKind && !isWoodCustom ? (
                 <div className="mt-6 space-y-2 text-base leading-relaxed text-fg/85 whitespace-pre-line">
                   {product.description}
                 </div>
-              ) : !hasVariants && !woodBlankKind && !isWoodCustom ? (
+              ) : !hasVariants && !woodBlankKind && !isWoodCustom && !pageContent ? (
                 <p className="mt-6 text-base leading-relaxed text-fg/85">
                   Материалы и инструменты для мастеров. Напишите в WhatsApp —
                   уточним наличие, объём и условия доставки.
@@ -191,6 +199,9 @@ export default async function MastersProductPage({ params, searchParams }: Props
               </p>
             </div>
           </div>
+          {pageContent && !woodBlankKind && !isWoodCustom ? (
+            <ProductPageContentDetails content={pageContent} />
+          ) : null}
         </Container>
       </section>
     </LandingShell>

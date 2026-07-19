@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
+import { useCookieConsent } from "@/components/consent/cookie-consent-provider";
 import {
   isYandexMetrikaEnabled,
   YANDEX_METRIKA_ID,
@@ -28,12 +29,29 @@ function trackPageView() {
 
 export function YandexMetrika() {
   const pathname = usePathname();
+  const { ready, hasAnalytics } = useCookieConsent();
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    trackPageView();
-  }, [pathname]);
+    if (!ready || !hasAnalytics || !isYandexMetrikaEnabled()) return;
+    if (typeof window.ym !== "function") return;
 
-  if (!isYandexMetrikaEnabled()) return null;
+    if (!initializedRef.current) {
+      window.ym(YANDEX_METRIKA_ID, "init", {
+        ssr: true,
+        webvisor: true,
+        clickmap: true,
+        ecommerce: "dataLayer",
+        accurateTrackBounce: true,
+        trackLinks: true,
+      });
+      initializedRef.current = true;
+    }
+
+    trackPageView();
+  }, [pathname, ready, hasAnalytics]);
+
+  if (!isYandexMetrikaEnabled() || !ready || !hasAnalytics) return null;
 
   return (
     <>
@@ -45,15 +63,6 @@ export function YandexMetrika() {
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
             k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
           })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${YANDEX_METRIKA_ID}', 'ym');
-
-          ym(${YANDEX_METRIKA_ID}, 'init', {
-            ssr: true,
-            webvisor: true,
-            clickmap: true,
-            ecommerce: "dataLayer",
-            accurateTrackBounce: true,
-            trackLinks: true
-          });
         `}
       </Script>
       <noscript>

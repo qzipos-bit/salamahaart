@@ -2,36 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
+import { BUKET_LANDING_PATH } from "@/lib/buket-landing";
+import { listCatalogCategoryNavLinks } from "@/lib/catalog-category-pages";
 
 const items = [
+  ...listCatalogCategoryNavLinks().map((page) => ({
+    title: page.label,
+    href: page.href,
+    img: page.image,
+  })),
   {
-    title: "Столы",
-    href: `${CATALOG_SHOP_PATH}?cat=stoly`,
-    img: "/category-stoly.webp",
-  },
-  {
-    title: "Часы",
-    href: `${CATALOG_SHOP_PATH}?cat=chasy`,
-    img: "/category-chasy.webp",
-  },
-  {
-    title: "Картины",
-    href: `${CATALOG_SHOP_PATH}?cat=kartiny`,
-    img: "/category-kartiny.webp",
-  },
-  {
-    title: "Декор",
-    href: `${CATALOG_SHOP_PATH}?cat=dekor`,
-    img: "/category-dekor.webp",
-  },
-  {
-    title: "Посуда",
-    href: `${CATALOG_SHOP_PATH}?cat=posuda`,
-    img: "/category-posuda.webp",
-  },
-  {
-    title: "Букеты в смоле",
-    href: `${CATALOG_SHOP_PATH}?cat=bukety`,
+    title: "Сохранение букета",
+    href: BUKET_LANDING_PATH,
     img: "/category-bukety.webp",
   },
 ];
@@ -67,11 +49,7 @@ export function Categories() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 [contain:layout]">
           {items.map((c, index) => (
-            <Link
-              key={c.title}
-              href={c.href}
-              className={categoryCardClass}
-            >
+            <Link key={c.href} href={c.href} className={categoryCardClass}>
               <div className="relative aspect-[4/3] overflow-hidden bg-sage-muted/25">
                 <Image
                   src={c.img}

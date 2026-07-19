@@ -39,6 +39,13 @@ function formatOrderText(order: CartOrderPayload, appliedPromo?: AppliedPromo | 
   if (order.comment?.trim()) {
     lines.push(`Комментарий: ${order.comment.trim()}`);
   }
+  lines.push(
+    "",
+    "Согласия:",
+    `— Оферта: да`,
+    `— Обработка ПДн: да`,
+    `— Рекламная рассылка: ${order.consent.rassylka ? "да" : "нет"}`,
+  );
   lines.push("", "Товары:");
   const base = getSiteBaseUrl();
   for (const item of order.items) {
@@ -172,6 +179,7 @@ function formatOrderHtml(
       <p><strong>Телефон:</strong> ${escapeHtml(order.phone)}</p>
       ${order.email?.trim() ? `<p><strong>Email:</strong> ${escapeHtml(order.email.trim())}</p>` : ""}
       ${order.comment?.trim() ? `<p><strong>Комментарий:</strong> ${escapeHtml(order.comment.trim())}</p>` : ""}
+      <p><strong>Согласия:</strong> оферта — да; ПДн — да; рассылка — ${order.consent.rassylka ? "да" : "нет"}</p>
       ${promoBlock}
       ${discountBlock}
       <table style="border-collapse:collapse;width:100%;margin-top:16px;font-size:14px;">

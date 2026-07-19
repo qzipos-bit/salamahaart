@@ -16,6 +16,18 @@ const nextConfig: NextConfig = {
     return [
       ...mastersLegacyRedirects,
       {
+        source: "/catalog",
+        has: [{ type: "query", key: "cat", value: "bukety" }],
+        destination: "/sohranenie-buketa-v-smole",
+        permanent: true,
+      },
+      {
+        source: "/catalog/vse-tovary",
+        has: [{ type: "query", key: "cat", value: "bukety" }],
+        destination: "/sohranenie-buketa-v-smole",
+        permanent: true,
+      },
+      {
         source: "/catalog/panello-sage",
         destination: "/catalog/fotaramka-30x40-a4",
         permanent: true,

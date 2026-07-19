@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/layout/container";
 import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
+import { BUKET_LANDING_PATH } from "@/lib/buket-landing";
+import { NARDY_LANDING_PATH } from "@/lib/nardy-landing";
+import { listCatalogCategoryNavLinks } from "@/lib/catalog-category-pages";
 import { ALL_PRODUCTS } from "@/lib/products";
 import {
   SEO_CATALOG_LANDINGS,
@@ -9,7 +12,7 @@ import {
 } from "@/lib/seo-catalog-landings";
 
 const cardClass =
-  "flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-green/15 bg-white shadow-[var(--shadow-sm)]";
+  "flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-green/15 bg-white shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:shadow-[var(--shadow)]";
 
 function landingPreviewImage(landing: SeoCatalogLanding): string {
   if (landing.hubImage) return landing.hubImage;
@@ -20,11 +23,50 @@ function landingPreviewImage(landing: SeoCatalogLanding): string {
   return product?.image ?? "/quick-lead-botanical-table.webp";
 }
 
+function CatalogCategoryHub() {
+  const categories = [
+    ...listCatalogCategoryNavLinks(),
+    {
+      label: "Сохранение букета",
+      href: BUKET_LANDING_PATH,
+      image: "/category-bukety.webp",
+    },
+  ];
+
+  return (
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {categories.map((category) => (
+        <Link
+          key={category.href}
+          href={category.href}
+          prefetch={false}
+          className={cardClass}
+        >
+          <div className="relative aspect-[4/3] overflow-hidden bg-sage-muted/40">
+            <Image
+              src={category.image}
+              alt={category.label}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          </div>
+          <div className="flex flex-1 flex-col border-t border-green/10 px-5 py-4">
+            <span className="font-sans text-lg font-bold leading-snug text-green-deep">
+              {category.label}
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 export function CatalogHub() {
   const landings = Object.values(SEO_CATALOG_LANDINGS);
 
   return (
-    <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {landings.map((landing) => (
         <Link
           key={landing.key}
@@ -70,7 +112,7 @@ export function CatalogHubPageContent() {
           Каталог изделий
         </p>
         <h1 className="mt-2 font-serif text-4xl font-semibold text-green">
-          Изделия из эпоксидной смолы
+          Изделия из эпоксидной смолы и дерева
         </h1>
         <p className="mt-4 max-w-3xl text-sm leading-relaxed text-fg/70 sm:text-base">
           Выберите раздел — в каждом собраны готовые работы, описание и цены.
@@ -84,7 +126,41 @@ export function CatalogHubPageContent() {
           .
         </p>
 
+        <h2 className="mt-12 font-serif text-2xl font-semibold text-green sm:text-3xl">
+          Категории
+        </h2>
+        <CatalogCategoryHub />
+
+        <h2 className="mt-14 font-serif text-2xl font-semibold text-green sm:text-3xl">
+          Тематические подборки
+        </h2>
         <CatalogHub />
+
+        <h2 className="mt-14 font-serif text-2xl font-semibold text-green sm:text-3xl">
+          Игры
+        </h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Link href={NARDY_LANDING_PATH} prefetch={false} className={cardClass}>
+            <div className="relative aspect-[4/3] overflow-hidden bg-sage-muted/40">
+              <Image
+                src="/category-stoly.webp"
+                alt="Нарды ручной работы"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 33vw"
+              />
+            </div>
+            <div className="flex flex-1 flex-col border-t border-green/10 px-5 py-4">
+              <span className="font-sans text-lg font-bold leading-snug text-green-deep">
+                Нарды
+              </span>
+              <span className="mt-2 text-sm leading-relaxed text-fg/65">
+                Авторские нарды из слэба и смолы — подарок с гравировкой на
+                заказ.
+              </span>
+            </div>
+          </Link>
+        </div>
 
         <p className="mt-10 text-center">
           <Link

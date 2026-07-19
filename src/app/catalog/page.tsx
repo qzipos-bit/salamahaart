@@ -7,9 +7,9 @@ import { buildCatalogHubSchemas } from "@/lib/schema/collection-page";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Каталог изделий из эпоксидной смолы — Salamaha Fine Art",
+  title: "Изделия из эпоксидной смолы на заказ в Краснодаре | Salamaha",
   description:
-    "Каталог изделий из эпоксидной смолы: столики для завтрака, тарелки и блюда, подносы, часы, картины, сервировочные доски. Ручная работа, заказ и доставка.",
+    "Авторские изделия из эпоксидной смолы и дерева на заказ: столы, часы, панно, посуда, декор и подарки. Ручная работа в Краснодаре, доставка по РФ. Каталог с ценами.",
 };
 
 export default function CatalogPage() {

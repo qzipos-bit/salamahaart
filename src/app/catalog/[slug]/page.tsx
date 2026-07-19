@@ -7,8 +7,16 @@ import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { ProductCartActions } from "@/components/shop/product-cart-actions";
 import { CatalogBackLink } from "@/components/shop/catalog-back-link";
+import {
+  ProductPageContentDetails,
+  ProductPageLead,
+} from "@/components/shop/product-page-content-blocks";
 import { ALL_PRODUCTS } from "@/lib/products";
 import { getProductSeo } from "@/lib/product-seo";
+import {
+  catalogLandingLink,
+  getCatalogProductPageContent,
+} from "@/lib/product-page-content";
 import { CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
 import {
   appendCatalogReturn,
@@ -65,6 +73,8 @@ export default async function ProductPage({ params, searchParams }: Props) {
     `/catalog/${product.slug}`,
     backHref !== CATALOG_SHOP_PATH ? backHref : undefined,
   );
+  const pageContent = getCatalogProductPageContent(product.slug);
+  const categoryLanding = catalogLandingLink(product.slug);
 
   return (
     <LandingShell>
@@ -104,11 +114,15 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <p className={PRODUCT_PAGE_PRICE_CLASS}>
                 {product.price}
               </p>
-              <p className="mt-6 text-base leading-relaxed text-fg/85">
-                Изделие изготавливается вручную. Срок и финальная стоимость
-                зависят от размеров и пожеланий по пигменту и вставкам. Напишите
-                в WhatsApp — пришлю варианты и смету.
-              </p>
+              {pageContent ? (
+                <ProductPageLead content={pageContent} />
+              ) : (
+                <p className="mt-6 text-base leading-relaxed text-fg/85">
+                  Изделие изготавливается вручную. Срок и финальная стоимость
+                  зависят от размеров и пожеланий по пигменту и вставкам. Напишите
+                  в WhatsApp — пришлю варианты и смету.
+                </p>
+              )}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <ProductCartActions
                   slug={product.slug}
@@ -123,6 +137,12 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </div>
             </div>
           </div>
+          {pageContent ? (
+            <ProductPageContentDetails
+              content={pageContent}
+              categoryLanding={categoryLanding}
+            />
+          ) : null}
         </Container>
       </section>
     </LandingShell>

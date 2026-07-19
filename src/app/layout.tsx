@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Italianno, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
 import { YandexMetrika } from "@/components/analytics/yandex-metrika";
+import { CookieConsentProvider } from "@/components/consent/cookie-consent-provider";
+import { CookieBanner } from "@/components/layout/cookie-banner";
 import { buildGlobalSiteSchemas } from "@/lib/schema/organization";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -57,9 +59,12 @@ export default function RootLayout({
       className={`${manrope.variable} ${cormorant.variable} ${italianno.variable} h-full antialiased`}
     >
       <body className="relative min-h-full flex flex-col">
-        <JsonLd data={buildGlobalSiteSchemas()} />
-        <YandexMetrika />
-        {children}
+        <CookieConsentProvider>
+          <JsonLd data={buildGlobalSiteSchemas()} />
+          <YandexMetrika />
+          {children}
+          <CookieBanner />
+        </CookieConsentProvider>
       </body>
     </html>
   );

@@ -164,3 +164,5 @@ export function filterCatalogProducts(
   }
   return list;
 }
+
+export { catalogCategoryCanonicalPath, type MappedCatalogCategory } from "@/lib/catalog-category-pages";

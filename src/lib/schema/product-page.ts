@@ -3,8 +3,7 @@ import type { Product } from "@/components/shop/product-card";
 import type { MasterProduct } from "@/lib/masters-products";
 import { MASTERS_CATALOG_PATH } from "@/lib/masters-products";
 import { MASTERS_CATEGORY_LABELS } from "@/lib/masters-catalog-filters";
-import { getMastersProductSeo } from "@/lib/masters-product-seo";
-import { getProductSeo } from "@/lib/product-seo";
+import { visibleProductDescription } from "@/lib/product-page-content";
 import {
   SEO_CATALOG_LANDINGS,
   type SeoCatalogLanding,
@@ -72,14 +71,7 @@ function productDescription(
   fallbackTitle: string,
   catalog: "catalog" | "masters",
 ): string {
-  if (catalog === "catalog") {
-    const seo = getProductSeo(slug);
-    if (seo?.description) return seo.description;
-    return `Изделие «${fallbackTitle}» из эпоксидной смолы и дерева ручной работы. На заказ в Краснодаре, доставка по РФ.`;
-  }
-  const seo = getMastersProductSeo(slug);
-  if (seo?.description) return seo.description;
-  return `«${fallbackTitle}» для мастеров эпоксидной смолы. Купить в Краснодаре, доставка по РФ.`;
+  return visibleProductDescription(slug, catalog, fallbackTitle);
 }
 
 function productCategoryLabel(

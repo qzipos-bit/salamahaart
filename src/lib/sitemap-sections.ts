@@ -1,4 +1,10 @@
+import { BUKET_LANDING_PATH } from "@/lib/buket-landing";
+import { NARDY_LANDING_PATH } from "@/lib/nardy-landing";
+import { STOLESHNICY_LANDING_PATH } from "@/lib/stoleshnicy-landing";
+import { allLegalPagePaths } from "@/lib/legal-pages";
 import { getAllBlogPosts } from "@/lib/blog";
+import { standaloneCatalogCategoryPaths } from "@/lib/catalog-category-pages";
+import { allStolyPagePaths } from "@/lib/stoly-pages";
 import { ALL_PRODUCTS } from "@/lib/products";
 import { MASTERS_CATALOG_PATH, MASTERS_PRODUCTS } from "@/lib/masters-products";
 import { allSeoLandingPaths } from "@/lib/seo-catalog-landings";
@@ -25,6 +31,9 @@ export function mainSitemapEntries(now: Date): SitemapUrlEntry[] {
       "/kalkulyator-stola",
       "/raschet-raskhoda-smoly",
       "/kurs-smola-derevo",
+      BUKET_LANDING_PATH,
+      STOLESHNICY_LANDING_PATH,
+      ...allLegalPagePaths(),
     ],
     now,
   );
@@ -43,7 +52,10 @@ export function catalogSitemapEntries(now: Date): SitemapUrlEntry[] {
       "/catalog/vse-tovary",
       MASTERS_CATALOG_PATH,
       "/formy-dlya-zalivki-epoksidnoj-smoloj",
+      ...allStolyPagePaths(),
+      ...standaloneCatalogCategoryPaths(),
       ...allSeoLandingPaths(),
+      NARDY_LANDING_PATH,
       ...productPaths,
       ...mastersPaths,
     ],

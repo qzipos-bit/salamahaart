@@ -16,12 +16,19 @@ export type CartItem = {
   priceRubMax?: number;
 };
 
+export type CartOrderConsent = {
+  oferta: boolean;
+  pdn: boolean;
+  rassylka?: boolean;
+};
+
 export type CartOrderPayload = {
   name: string;
   phone: string;
   email?: string;
   comment?: string;
   promoCode?: string;
+  consent: CartOrderConsent;
   items: Array<{
     catalog: CartCatalog;
     slug: string;

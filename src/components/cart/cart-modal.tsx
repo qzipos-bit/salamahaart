@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CART_CATALOG_LABELS } from "@/lib/cart-types";
 import { useCart } from "@/components/cart/cart-context";
+import { OrderLegalConsentFields } from "@/components/legal/order-legal-consent-fields";
 import {
   cartHasWoodBlankItems,
   cartItemDisplayPrice,
@@ -44,6 +45,9 @@ export function CartModal() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
+  const [acceptOferta, setAcceptOferta] = useState(false);
+  const [acceptPdn, setAcceptPdn] = useState(false);
+  const [acceptRassylka, setAcceptRassylka] = useState(false);
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<AppliedPromo | null>(null);
   const [promoMessage, setPromoMessage] = useState("");
@@ -68,6 +72,9 @@ export function CartModal() {
       setPromoMessage("");
       setPromoInput("");
       setPromoState("idle");
+      setAcceptOferta(false);
+      setAcceptPdn(false);
+      setAcceptRassylka(false);
     }
   }, [open]);
 
@@ -166,7 +173,7 @@ export function CartModal() {
   };
 
   const submit = async () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || !acceptOferta || !acceptPdn) return;
     setFormState("submitting");
     setErrorMessage("");
 
@@ -179,6 +186,11 @@ export function CartModal() {
           phone,
           email,
           comment,
+          consent: {
+            oferta: true,
+            pdn: true,
+            rassylka: acceptRassylka,
+          },
           promoCode: appliedPromo?.code ?? undefined,
           items: items.map((i) => ({
             catalog: i.catalog,
@@ -207,6 +219,9 @@ export function CartModal() {
       setPhone("");
       setEmail("");
       setComment("");
+      setAcceptOferta(false);
+      setAcceptPdn(false);
+      setAcceptRassylka(false);
       setPromoInput("");
       setAppliedPromo(null);
       setPromoMessage("");
@@ -428,6 +443,15 @@ export function CartModal() {
                   )}
                 </div>
 
+                <OrderLegalConsentFields
+                  acceptOferta={acceptOferta}
+                  onAcceptOfertaChange={setAcceptOferta}
+                  acceptPdn={acceptPdn}
+                  onAcceptPdnChange={setAcceptPdn}
+                  acceptRassylka={acceptRassylka}
+                  onAcceptRassylkaChange={setAcceptRassylka}
+                />
+
                 {formState === "error" && errorMessage ? (
                   <p className="text-sm font-medium text-red-800">
                     {errorMessage}
@@ -479,7 +503,11 @@ export function CartModal() {
               type="button"
               className="w-full"
               disabled={
-                formState === "submitting" || !name.trim() || !phone.trim()
+                formState === "submitting" ||
+                !name.trim() ||
+                !phone.trim() ||
+                !acceptOferta ||
+                !acceptPdn
               }
               onClick={submit}
             >

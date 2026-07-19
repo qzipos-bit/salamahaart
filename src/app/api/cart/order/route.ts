@@ -24,6 +24,16 @@ function parseBody(raw: unknown): CartOrderPayload | null {
     typeof b.promoCode === "string" ? normalizePromoCodeInput(b.promoCode) : "";
   const promoCode = promoCodeRaw || undefined;
 
+  const consentRaw = b.consent;
+  if (!consentRaw || typeof consentRaw !== "object") return null;
+  const consentObj = consentRaw as Record<string, unknown>;
+  const oferta = consentObj.oferta === true;
+  const pdn = consentObj.pdn === true;
+  const rassylka =
+    consentObj.rassylka === true ? true : undefined;
+
+  if (!oferta || !pdn) return null;
+
   if (name.length < 2 || !PHONE_RE.test(phone)) return null;
 
   if (!Array.isArray(b.items) || b.items.length === 0) return null;
@@ -81,7 +91,7 @@ function parseBody(raw: unknown): CartOrderPayload | null {
 
   if (items.length === 0) return null;
 
-  return { name, phone, email, comment, promoCode, items };
+  return { name, phone, email, comment, promoCode, consent: { oferta, pdn, rassylka }, items };
 }
 
 export async function POST(request: Request) {
@@ -91,7 +101,7 @@ export async function POST(request: Request) {
 
     if (!order) {
       return NextResponse.json(
-        { error: "Проверьте имя, телефон и список товаров." },
+        { error: "Проверьте имя, телефон, согласия и список товаров." },
         { status: 400 },
       );
     }

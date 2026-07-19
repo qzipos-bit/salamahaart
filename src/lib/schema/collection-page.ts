@@ -1,5 +1,12 @@
 import { ALL_PRODUCTS } from "@/lib/products";
+import type { Product } from "@/components/shop/product-card";
 import { MASTERS_CATALOG_PATH, MASTERS_PRODUCTS } from "@/lib/masters-products";
+import {
+  CATALOG_CATEGORY_PAGES,
+  allCatalogCategoryPaths,
+  getCatalogCategoryPage,
+  type StandaloneCatalogCategoryPageKey,
+} from "@/lib/catalog-category-pages";
 import {
   SEO_CATALOG_LANDINGS,
   type SeoCatalogLanding,
@@ -63,17 +70,33 @@ export function buildCollectionPageSchema(input: {
 
 export function buildCatalogHubSchemas() {
   const landings = Object.values(SEO_CATALOG_LANDINGS);
+  const categoryItems = allCatalogCategoryPaths().map((path) => {
+    const page = Object.values(CATALOG_CATEGORY_PAGES).find(
+      (entry) => `/${entry.path}` === path,
+    );
+    return {
+      name: page?.footerLabel ?? path,
+      path,
+    };
+  });
+  const landingItems = landings
+    .filter(
+      (landing) =>
+        !categoryItems.some((item) => item.path === `/${landing.path}`),
+    )
+    .map((landing) => ({
+      name: landing.footerLabel,
+      path: `/${landing.path}`,
+    }));
+
   return [
     buildCollectionPageSchema({
-      name: "Изделия из эпоксидной смолы",
+      name: "Изделия из эпоксидной смолы и дерева",
       description:
-        "Каталог изделий из эпоксидной смолы: столики для завтрака, тарелки и блюда, подносы, часы, картины, сервировочные доски.",
+        "Авторские изделия из эпоксидной смолы и дерева на заказ: столы, часы, панно, посуда, декор и подарки. Ручная работа в Краснодаре, доставка по РФ.",
       path: "/catalog",
       itemListName: "Разделы каталога",
-      items: landings.map((landing) => ({
-        name: landing.footerLabel,
-        path: `/${landing.path}`,
-      })),
+      items: [...categoryItems, ...landingItems],
     }),
     buildBreadcrumbListSchema([
       { name: "Главная", path: "/" },
@@ -148,4 +171,29 @@ export function buildSeoCatalogLandingSchemas(landing: SeoCatalogLanding) {
   }
 
   return schemas;
+}
+
+export function buildCatalogCategoryPageSchemas(
+  categoryKey: StandaloneCatalogCategoryPageKey,
+  products: Product[],
+) {
+  const page = getCatalogCategoryPage(categoryKey);
+
+  return [
+    buildCollectionPageSchema({
+      name: page.h1,
+      description: page.description,
+      path: `/${page.path}`,
+      itemListName: page.collectionHeading,
+      items: products.map((product) => ({
+        name: product.title,
+        path: `/catalog/${product.slug}`,
+      })),
+    }),
+    buildBreadcrumbListSchema([
+      { name: "Главная", path: "/" },
+      { name: "Каталог", path: "/catalog" },
+      { name: page.h1, path: `/${page.path}` },
+    ]),
+  ];
 }

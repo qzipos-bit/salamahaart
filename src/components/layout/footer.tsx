@@ -2,8 +2,14 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { CATALOG_HUB_PATH, CATALOG_SHOP_PATH } from "@/lib/catalog-filters";
+import { BUKET_LANDING_PATH } from "@/lib/buket-landing";
+import { NARDY_LANDING_PATH } from "@/lib/nardy-landing";
+import { STOLESHNICY_LANDING_PATH } from "@/lib/stoleshnicy-landing";
+import { listCatalogCategoryNavLinks } from "@/lib/catalog-category-pages";
 import { MASTERS_CATALOG_PATH } from "@/lib/masters-products";
 import { SEO_CATALOG_LANDINGS } from "@/lib/seo-catalog-landings";
+import { LEGAL_NAV_LINKS } from "@/lib/legal-nav";
+import { LEGAL_SELLER } from "@/lib/legal-seller";
 import { SITE } from "@/lib/site";
 
 export function Footer() {
@@ -29,7 +35,42 @@ export function Footer() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 md:col-span-8 md:col-start-5 lg:col-start-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-green/55">
-                Каталоги
+                Категории
+              </p>
+              <ul className="mt-4 space-y-2 text-sm text-fg/75">
+                {listCatalogCategoryNavLinks().map((category) => (
+                  <li key={category.href}>
+                    <Link href={category.href} className="hover:text-green">
+                      {category.label}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href={BUKET_LANDING_PATH} className="hover:text-green">
+                    Сохранение букета
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={STOLESHNICY_LANDING_PATH}
+                    className="hover:text-green"
+                  >
+                    Столешницы из смолы
+                  </Link>
+                </li>
+              </ul>
+              <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-green/55">
+                Игры
+              </p>
+              <ul className="mt-4 space-y-2 text-sm text-fg/75">
+                <li>
+                  <Link href={NARDY_LANDING_PATH} className="hover:text-green">
+                    Нарды
+                  </Link>
+                </li>
+              </ul>
+              <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-green/55">
+                Подборки
               </p>
               <ul className="mt-4 space-y-2 text-sm text-fg/75">
                 {Object.values(SEO_CATALOG_LANDINGS).map((landing) => (
@@ -115,9 +156,23 @@ export function Footer() {
           </div>
         </div>
         <div className="gold-line mt-12" />
-        <p className="mt-6 text-center text-xs text-fg/45">
-          © {new Date().getFullYear()} {SITE.name}. ИП / самозанятый — уточнить
-          реквизиты.
+        <nav
+          className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-fg/55"
+          aria-label="Юридические документы"
+        >
+          {LEGAL_NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-green hover:underline"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <p className="mt-4 text-center text-xs text-fg/45">
+          © {new Date().getFullYear()} {SITE.name}. Самозанятая{" "}
+          {LEGAL_SELLER.fullName}, ИНН {LEGAL_SELLER.inn}
         </p>
       </Container>
     </footer>
